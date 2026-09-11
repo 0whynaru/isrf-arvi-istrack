@@ -1,0 +1,11 @@
+{
+  "name": "istrack-isfr-arvi",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ISTrack / ISFR-ARVI - static disaster map site, plus Netlify Functions for background earthquake push notifications.",
+  "dependencies": {
+    "web-push": "^3.6.7",
+    "@netlify/blobs": "^8.1.0",
+    "@supabase/supabase-js": "^2.45.4"
+  }
+}

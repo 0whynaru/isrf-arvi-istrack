@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - Pelacak ISS Langsung</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="splash.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="theme.js"></script>
+<script src="i18n.js"></script>
+</head>
+<body>
+
+<div class="hero">
+  <img class="hero-bg" src="assets/hero-astronaut.jpg" data-i18n-alt="splash.heroAlt" alt="Astronaut mengerjakan pemeliharaan luar Stasiun Luar Angkasa Internasional">
+  <div class="hero-scrim"></div>
+
+  <div class="hero-content">
+    <div class="hero-top">
+      <span class="hero-status"><span class="dot"></span><span data-i18n="splash.status">Data langsung dari orbit</span></span>
+    </div>
+
+    <div class="hero-mid">
+      <img class="hero-logo" src="assets/istrack-logo.png" alt="ISTrack">
+      <p class="hero-tagline" data-i18n="splash.tagline">Pos kendali pribadimu untuk Stasiun Luar Angkasa Internasional - posisi, kecepatan, dan cuaca di titik orbitnya, diperbarui langsung setiap beberapa detik.</p>
+
+      <div class="hero-cta-row">
+        <a href="index.html" class="hero-cta"><span data-i18n="splash.ctaMain">Mulai Melacak</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <a href="news.html" class="hero-cta-secondary" data-i18n="splash.ctaNews">Baca Warta Antariksa</a>
+      </div>
+
+      <div class="hero-facts">
+        <div class="hero-fact"><span class="hero-fact-k" data-i18n="splash.factSpeedK">Kecepatan orbit</span><span class="hero-fact-v" data-i18n="splash.factSpeedV">~27.600 km/jam</span></div>
+        <div class="hero-fact"><span class="hero-fact-k" data-i18n="splash.factOrbitK">Satu putaran</span><span class="hero-fact-v" data-i18n="splash.factOrbitV">~93 menit</span></div>
+        <div class="hero-fact"><span class="hero-fact-k" data-i18n="splash.factAltK">Ketinggian</span><span class="hero-fact-v" data-i18n="splash.factAltV">~400 km</span></div>
+      </div>
+    </div>
+
+    <div class="hero-bottom">
+      <p class="hero-scroll-hint" data-i18n="splash.scrollHint">Sumber data: wheretheiss.at, Open-Meteo, CelesTrak, NASA</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

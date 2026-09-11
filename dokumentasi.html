@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - Dokumentasi</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="dokumentasi.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="theme.js"></script>
+<script src="menu-color.js"></script>
+<script src="i18n.js"></script>
+<script src="motion.js"></script>
+</head>
+<body>
+
+<div class="site-nav-bar">
+  <nav class="site-nav">
+    <a class="site-brand" href="index.html" aria-label="ISTrack - beranda">
+      <img class="site-brand-logo" src="assets/istrack-icon.png" alt="">
+      <span class="site-brand-text">ISTrack</span>
+    </a>
+    <button class="hamburger-btn" id="hamburgerBtn" data-i18n-aria-label="nav.openMenu" aria-label="Buka menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="site-nav-links" id="siteNavLinks">
+      <a href="index.html" class="site-nav-link"><i class="fa-solid fa-satellite nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.iss">Pelacak ISS</span></a>
+      <a href="news.html" class="site-nav-link"><i class="fa-regular fa-newspaper nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.news">Warta</span></a>
+      <a href="mechanical.html" class="site-nav-link"><i class="fa-solid fa-wave-square nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.mechanical">MECHANICAL</span></a>
+      <a href="arvi.html" class="site-nav-link"><i class="fa-solid fa-camera nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.arvi">ISFR-ARVI</span></a>
+      <a href="dokumentasi.html" class="site-nav-link active"><i class="fa-solid fa-folder-open nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.docs">Dokumentasi</span></a>
+      <a href="settings.html" class="site-nav-link"><i class="fa-solid fa-gear nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.settings">Pengaturan</span></a>
+    </div>
+  </nav>
+</div>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow"><span>Dokumentasi</span></p>
+      <h1>Kirim &amp; kelola dokumen</h1>
+      <p class="lede">Kirim dokumen untuk dibagikan ke anggota lain. Dokumen baru menunggu persetujuan admin sebelum bisa diunduh.</p>
+    </div>
+    <button class="pass-action-btn" id="openUpload" style="padding:10px 16px;"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Kirim Dokumen</button>
+  </header>
+
+  <div class="panel-grid">
+    <section class="panel wide">
+      <div class="doc-stats" id="docStats"></div>
+
+      <div class="doc-toolbar">
+        <div class="doc-tabs" id="docTabs">
+          <button class="doc-tab active" data-filter="all">Semua</button>
+          <button class="doc-tab" data-filter="rejected">Ditolak</button>
+        </div>
+        <div class="doc-toolbar-actions">
+          <div class="doc-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="docSearchInput" placeholder="Cari dokumen atau pengirim...">
+          </div>
+          <button class="doc-refresh-btn" id="docRefreshBtn" title="Muat ulang" aria-label="Muat ulang daftar dokumen">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Nama Dokumen</th>
+              <th>Pengirim</th>
+              <th>Tanggal</th>
+              <th style="text-align:right;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="docTableBody"></tbody>
+        </table>
+      </div>
+      <div class="doc-empty" id="docEmptyState" style="display:none;">
+        <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+        Belum ada dokumen yang cocok.
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<div class="doc-overlay" id="docOverlay">
+  <div class="doc-modal">
+    <h2>Kirim Dokumen</h2>
+    <p class="doc-modal-sub">Dokumen akan berstatus "Menunggu" sampai disetujui admin.</p>
+    <div class="doc-field">
+      <label>File</label>
+      <div class="doc-dropzone" id="docDropzone">
+        <i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i>
+        <span id="docDropzoneText">Klik untuk pilih file, atau tarik ke sini</span>
+      </div>
+      <input type="file" id="docFileInput" style="display:none;">
+    </div>
+    <div class="doc-field">
+      <label>Judul Dokumen</label>
+      <input type="text" id="docTitleInput" placeholder="cth. Laporan Bulanan September">
+    </div>
+    <div class="doc-field">
+      <label>Nama Kamu</label>
+      <input type="text" id="docUploaderInput" placeholder="cth. Budi Santoso">
+    </div>
+    <div class="doc-field">
+      <label>Catatan (opsional)</label>
+      <textarea id="docNoteInput" placeholder="Tambahkan konteks singkat untuk admin..."></textarea>
+    </div>
+    <p class="doc-hint"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>Maks. 4,5MB per file. Format PDF atau gambar disarankan.</span></p>
+    <div class="doc-modal-actions">
+      <button class="doc-btn" id="docCancelUpload">Batal</button>
+      <button class="doc-btn primary" id="docSubmitUpload" disabled>Kirim untuk Ditinjau</button>
+    </div>
+  </div>
+</div>
+
+<div class="doc-toast" id="docToast"></div>
+
+<script>
+/* ====================================================================
+   LAPISAN DATA — nyambung ke Supabase lewat Netlify Functions. File
+   dikirim sebagai base64 langsung di body JSON (maks ~4.5MB, lihat
+   MAX_UPLOAD_BYTES di netlify/functions/_supabase.js). Kalau butuh file
+   lebih besar, ganti upload() ini ke pola signed-upload-url.
+   ==================================================================== */
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+const DocsAPI = {
+  async list(){
+    const res = await fetch('/.netlify/functions/documents-list');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal memuat daftar dokumen.');
+    return data.documents.map(d => ({
+      id: d.id,
+      name: d.title,
+      fileName: d.fileName,
+      type: /image\//.test(d.mimeType) ? 'img' : 'pdf',
+      uploader: d.uploader,
+      date: (d.createdAt || '').slice(0, 10),
+      status: d.status
+    }));
+  },
+
+  async upload({ file, title, uploaderName, note }){
+    const fileBase64 = await fileToBase64(file);
+    const res = await fetch('/.netlify/functions/documents-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title || file.name,
+        uploaderName,
+        note,
+        fileName: file.name,
+        mimeType: file.type || 'application/octet-stream',
+        fileBase64
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal mengirim dokumen.');
+    return data;
+  },
+
+  async download(id){
+    const res = await fetch('/.netlify/functions/documents-download?id=' + encodeURIComponent(id));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal mengunduh dokumen.');
+    return data; // { url, fileName }
+  }
+};
+
+const MAX_UPLOAD_BYTES = 4.5 * 1024 * 1024;
+const docState = { filter: 'all', query: '' };
+const docTableBody = document.getElementById('docTableBody');
+const docEmptyState = document.getElementById('docEmptyState');
+const docStatsEl = document.getElementById('docStats');
+
+function renderDocSkeleton(){
+  docEmptyState.style.display = 'none';
+  docTableBody.innerHTML = Array.from({ length: 4 }).map(() => `
+    <tr class="doc-skeleton-row">
+      <td><div class="doc-file"><div class="doc-skeleton avatar"></div><div style="flex:1;"><div class="doc-skeleton" style="margin-bottom:6px;"></div><div class="doc-skeleton short"></div></div></div></td>
+      <td><div class="doc-skeleton short"></div></td>
+      <td><div class="doc-skeleton short"></div></td>
+      <td></td>
+    </tr>
+  `).join('');
+}
+
+function renderDocStats(all){
+  const count = s => all.filter(d => d.status === s).length;
+  docStatsEl.innerHTML = `
+    <div class="doc-stat total"><div class="num">${all.length}</div><div class="lbl">TOTAL</div></div>
+    <div class="doc-stat rejected"><div class="num">${count('rejected')}</div><div class="lbl">DITOLAK</div></div>
+  `;
+}
+
+function docInitials(name){ return name.trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase(); }
+function docFileIconClass(type){ return type === 'img' ? 'doc-file-icon' : 'doc-file-icon pdf'; }
+function docFileIcon(type){ return type === 'img' ? 'fa-regular fa-image' : 'fa-regular fa-file-pdf'; }
+function docFormatDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+}
+
+async function renderDocs(){
+  let all;
+  try { all = await DocsAPI.list(); } catch (err){ showDocToast('err', err.message); docEmptyState.style.display='block'; docEmptyState.textContent='Gagal memuat dokumen.'; docTableBody.innerHTML=''; return; }
+  renderDocStats(all);
+  const q = docState.query.trim().toLowerCase();
+  const rows = all.filter(d => {
+    if (docState.filter !== 'all' && d.status !== docState.filter) return false;
+    if (q && !d.name.toLowerCase().includes(q) && !d.uploader.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  docTableBody.innerHTML = '';
+  docEmptyState.style.display = rows.length ? 'none' : 'block';
+
+  for (const doc of rows){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="doc-file">
+          <div class="${docFileIconClass(doc.type)}"><i class="${docFileIcon(doc.type)}" aria-hidden="true"></i></div>
+          <div>
+            <div class="doc-file-name">${doc.name}</div>
+            <div class="doc-file-note">Dikirim ${docFormatDate(doc.date)}</div>
+          </div>
+        </div>
+      </td>
+      <td data-label="Pengirim">
+        <div class="doc-uploader">
+          <div class="doc-avatar">${docInitials(doc.uploader)}</div>
+          ${doc.uploader}
+        </div>
+      </td>
+      <td data-label="Tanggal">${docFormatDate(doc.date)}</td>
+      <td data-label="Aksi">
+        <div class="doc-actions">
+          <button class="doc-icon-btn" title="${doc.status === 'active' ? 'Unduh' : 'Belum tersedia untuk diunduh'}"
+            data-download="${doc.id}" ${doc.status === 'active' ? '' : 'disabled'}>
+            <i class="fa-solid fa-download" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+    `;
+    docTableBody.appendChild(tr);
+  }
+}
+
+document.getElementById('docTabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('.doc-tab');
+  if (!btn) return;
+  document.querySelectorAll('#docTabs .doc-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  docState.filter = btn.dataset.filter;
+  renderDocs();
+});
+document.getElementById('docSearchInput').addEventListener('input', (e) => {
+  docState.query = e.target.value;
+  renderDocs();
+});
+const docRefreshBtn = document.getElementById('docRefreshBtn');
+docRefreshBtn.addEventListener('click', async () => {
+  docRefreshBtn.classList.add('spinning');
+  await renderDocs();
+  setTimeout(() => docRefreshBtn.classList.remove('spinning'), 300);
+});
+docTableBody.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-download]');
+  if (!btn || btn.disabled) return;
+  try {
+    const { url, fileName } = await DocsAPI.download(Number(btn.dataset.download));
+    window.location.href = url;
+    showDocToast('ok', `Mengunduh "${fileName}"`);
+  } catch (err){
+    showDocToast('err', err.message);
+  }
+});
+
+/* ---- modal kirim dokumen ---- */
+const docOverlay = document.getElementById('docOverlay');
+const docDropzone = document.getElementById('docDropzone');
+const docDropzoneText = document.getElementById('docDropzoneText');
+const docFileInput = document.getElementById('docFileInput');
+const docTitleInput = document.getElementById('docTitleInput');
+const docSubmitBtn = document.getElementById('docSubmitUpload');
+let pickedDocFile = null;
+
+function openDocModal(){ docOverlay.classList.add('show'); }
+function closeDocModal(){
+  docOverlay.classList.remove('show');
+  pickedDocFile = null;
+  docFileInput.value = '';
+  docTitleInput.value = '';
+  document.getElementById('docUploaderInput').value = '';
+  document.getElementById('docNoteInput').value = '';
+  docDropzone.classList.remove('has-file');
+  docDropzoneText.textContent = 'Klik untuk pilih file, atau tarik ke sini';
+  docSubmitBtn.disabled = true;
+}
+document.getElementById('openUpload').addEventListener('click', openDocModal);
+document.getElementById('docCancelUpload').addEventListener('click', closeDocModal);
+docOverlay.addEventListener('click', (e) => { if (e.target === docOverlay) closeDocModal(); });
+
+docDropzone.addEventListener('click', () => docFileInput.click());
+['dragover','dragenter'].forEach(evt => docDropzone.addEventListener(evt, (e) => { e.preventDefault(); docDropzone.classList.add('has-file'); }));
+docDropzone.addEventListener('dragleave', () => { if (!pickedDocFile) docDropzone.classList.remove('has-file'); });
+docDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) setPickedDocFile(e.dataTransfer.files[0]);
+});
+docFileInput.addEventListener('change', () => { if (docFileInput.files.length) setPickedDocFile(docFileInput.files[0]); });
+
+function setPickedDocFile(file){
+  if (file.size > MAX_UPLOAD_BYTES){
+    showDocToast('err', `File terlalu besar (${(file.size/1024/1024).toFixed(1)}MB). Maks. 4,5MB.`);
+    docFileInput.value = '';
+    return;
+  }
+  pickedDocFile = file;
+  docDropzone.classList.add('has-file');
+  docDropzoneText.textContent = `${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`;
+  if (!docTitleInput.value) docTitleInput.value = file.name.replace(/\.[^.]+$/, '');
+  docSubmitBtn.disabled = false;
+}
+
+docSubmitBtn.addEventListener('click', async () => {
+  if (!pickedDocFile) return;
+  const uploaderName = document.getElementById('docUploaderInput').value.trim();
+  if (!uploaderName){
+    showDocToast('err', 'Isi nama kamu dulu.');
+    return;
+  }
+  docSubmitBtn.disabled = true;
+  docSubmitBtn.textContent = 'Mengirim...';
+  try {
+    await DocsAPI.upload({
+      file: pickedDocFile,
+      title: docTitleInput.value.trim(),
+      uploaderName,
+      note: document.getElementById('docNoteInput').value.trim()
+    });
+    closeDocModal();
+    document.querySelector('#docTabs .doc-tab[data-filter="all"]').click();
+    showDocToast('ok', 'Dokumen terkirim, menunggu persetujuan admin.');
+  } catch (err){
+    showDocToast('err', 'Gagal mengirim: ' + err.message);
+  } finally {
+    docSubmitBtn.textContent = 'Kirim untuk Ditinjau';
+    docSubmitBtn.disabled = false;
+  }
+});
+
+let docToastTimer;
+function showDocToast(kind, msg){
+  const toast = document.getElementById('docToast');
+  toast.className = 'doc-toast show ' + kind;
+  toast.innerHTML = `<i class="fa-solid ${kind === 'ok' ? 'fa-circle-check' : 'fa-circle-xmark'}" aria-hidden="true"></i>${msg}`;
+  clearTimeout(docToastTimer);
+  docToastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+renderDocSkeleton();
+renderDocs();
+
+/* ---- hamburger menu (sama seperti halaman lain) ---- */
+(function(){
+  var btn=document.getElementById('hamburgerBtn');
+  var links=document.getElementById('siteNavLinks');
+  if(!btn || !links) return;
+  function close(){
+    links.classList.remove('open');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+  }
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    var open=links.classList.toggle('open');
+    btn.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  links.addEventListener('click',function(e){ if(e.target.tagName==='A')close(); });
+  document.addEventListener('click',function(e){ if(!links.contains(e.target)&&!btn.contains(e.target))close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape')close(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - Pelacak ISS Langsung</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=pano3">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="theme.js"></script>
+<script src="menu-color.js"></script>
+<script src="i18n.js"></script>
+<script src="motion.js"></script>
+<script src="push-alarm.js" defer></script>
+<script src="quake-consent.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+</head>
+<body class="app-is-loading">
+
+<div class="app-loading" id="appLoading" role="status" aria-live="polite">
+  <div class="app-loading-spinner" id="appLoadingLottie" aria-hidden="true"></div>
+  <p class="app-loading-title">ISTrack</p>
+  <p class="app-loading-subtitle" id="appLoadingSubtitle" data-i18n="idx.loadingSubtitle">Menyiapkan globe & data orbit…</p>
+</div>
+
+<a href="#mainContent" class="skip-link" data-i18n="a11y.skipLink">Lompat ke konten utama</a>
+
+<div class="site-nav-bar">
+  <nav class="site-nav">
+    <a class="site-brand" href="index.html" aria-label="ISTrack - beranda">
+      <img class="site-brand-logo" src="assets/istrack-icon.png" alt="">
+      <span class="site-brand-text">ISTrack</span>
+    </a>
+    <button class="hamburger-btn" id="hamburgerBtn" data-i18n-aria-label="nav.openMenu" aria-label="Buka menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="site-nav-links" id="siteNavLinks">
+      <a href="index.html" class="site-nav-link active"><i class="fa-solid fa-satellite nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.iss">Pelacak ISS</span></a>
+      <a href="news.html" class="site-nav-link"><i class="fa-regular fa-newspaper nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.news">Warta</span></a>
+      <a href="mechanical.html" class="site-nav-link"><i class="fa-solid fa-wave-square nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.mechanical">MECHANICAL</span></a>
+      <a href="arvi.html" class="site-nav-link"><i class="fa-solid fa-camera nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.arvi">ISFR-ARVI</span></a>
+      <a href="dokumentasi.html" class="site-nav-link"><i class="fa-solid fa-folder-open nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.docs">Dokumentasi</span></a>
+      <a href="settings.html" class="site-nav-link"><i class="fa-solid fa-gear nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.settings">Pengaturan</span></a>
+    </div>
+  </nav>
+</div>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<button class="ar-fab-btn hidden" id="arFabBtn" data-i18n-aria-label="idx.arActivate" aria-label="Aktifkan Mode AR" title="Aktifkan Mode AR">
+  <span class="ar-fab-icon"><i class="fa-solid fa-satellite-dish"></i></span>
+  <span class="ar-fab-text" data-i18n="idx.arFab">Mode AR</span>
+</button>
+
+<div class="wrap" id="mainContent">
+
+  <header>
+    <div>
+      <p class="eyebrow" data-i18n="idx.eyebrow">Pos Kendali</p>
+      <h1 data-i18n="idx.h1">Di mana ISS sekarang?</h1>
+      <p class="lede" data-i18n="idx.lede">Stasiun Luar Angkasa Internasional mengorbit Bumi setiap ~93 menit dengan kecepatan sekitar 27.600 km/jam. Halaman ini membaca posisinya secara langsung, lalu mengecek cuaca tepat di bawah titik orbitnya.</p>
+      <div class="a11y-read-row">
+        <button class="pass-action-btn" id="a11yReadBtn"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> <span data-i18n="a11y.readStatusBtn">Dengar status ISS</span></button>
+        <p class="a11y-summary sr-only" id="a11yStatusSummary" aria-live="off"></p>
+      </div>
+    </div>
+    <div class="status" id="statusPill" role="status" aria-live="polite">
+      <span class="dot" id="statusDot" aria-hidden="true"></span>
+      <span id="statusText" data-i18n="js.connecting">menghubungkan…</span>
+    </div>
+  </header>
+
+  <section class="mapcard">
+    <div class="coordread" id="coordread"></div>
+    <div class="globewrap">
+      <canvas id="globe" role="img" data-i18n-aria-label="a11y.globeAriaLabel" aria-label="Peta 3D interaktif"></canvas>
+      <div class="globe-labels" id="globeLabels" aria-hidden="true"></div>
+    </div>
+    <p class="globe-hint" data-i18n="idx.globeHint">Seret untuk memutar globe</p>
+
+    <div class="sat-info-popup hidden" id="satInfoPopup">
+      <div class="sat-info-head">
+        <span class="sat-info-dot" id="satInfoDot"></span>
+        <span class="sat-info-name" id="satInfoName">--</span>
+        <span class="sat-info-live hidden" id="satInfoLive" data-i18n="js.satInfoLive">LANGSUNG</span>
+        <button class="map-panel-close" id="satInfoClose" data-i18n-aria-label="js.satInfoClose" aria-label="Tutup info satelit"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="sat-info-photo-wrap hidden" id="satInfoPhotoWrap">
+        <img class="sat-info-photo" id="satInfoPhoto" alt="">
+      </div>
+      <div class="sat-info-body">
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoAlt">Ketinggian</span><span id="satInfoAlt">--</span></div>
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoVel">Kecepatan</span><span id="satInfoVel">--</span></div>
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoPos">Posisi</span><span id="satInfoPos">--</span></div>
+        <button class="sat-info-more" id="satInfoMoreBtn" disabled>
+          <span data-i18n="js.satInfoMore">Pelajari lebih lanjut</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="share-card-btn" id="shareIssBtn">
+      <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+      <span data-i18n="share.btn">Bagikan posisi ISS</span>
+    </button>
+
+    <div class="map-toolbar" id="mapToolbar">
+      <button class="map-tool-btn" id="mapZoomInBtn" data-i18n-aria-label="map.zoomIn" aria-label="Perbesar" title="Perbesar"><i class="fa-solid fa-plus"></i></button>
+      <button class="map-tool-btn" id="mapZoomOutBtn" data-i18n-aria-label="map.zoomOut" aria-label="Perkecil" title="Perkecil"><i class="fa-solid fa-minus"></i></button>
+      <button class="map-tool-btn" id="mapFollowBtn" data-i18n-aria-label="map.follow" aria-label="Putar otomatis" title="Putar otomatis"><i class="fa-solid fa-crosshairs"></i></button>
+      <button class="map-tool-btn" id="mapFullscreenBtn" data-i18n-aria-label="map.fullscreen" aria-label="Layar penuh" title="Layar penuh"><i class="fa-solid fa-expand"></i></button>
+      <span class="map-tool-sep"></span>
+      <button class="map-tool-btn" id="mapLayersBtn" data-i18n-aria-label="map.layers" aria-label="Layer peta" title="Layer peta"><i class="fa-solid fa-layer-group"></i></button>
+      <button class="map-tool-btn" id="mapFilterBtn" data-i18n-aria-label="map.filters" aria-label="Filter satelit" title="Filter satelit"><i class="fa-solid fa-satellite"></i></button>
+    </div>
+
+    <div class="map-panel hidden" id="mapLayersPanel">
+      <div class="map-panel-head">
+        <h3 data-i18n="map.layersTitle">Layer peta</h3>
+        <button class="map-panel-close" data-close-panel aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="map-panel-body">
+        <label class="map-toggle-row">
+          <span data-i18n="map.layerGrid">Grid lintang/bujur</span>
+          <input type="checkbox" id="layerGridToggle" checked>
+        </label>
+        <label class="map-toggle-row">
+          <span data-i18n="map.layerDayNight">Siang/malam (terminator)</span>
+          <input type="checkbox" id="layerDayNightToggle" checked>
+        </label>
+        <label class="map-toggle-row">
+          <span data-i18n="map.layerTrail">Jejak orbit</span>
+          <input type="checkbox" id="layerTrailToggle" checked>
+        </label>
+        <label class="map-toggle-row">
+          <span data-i18n="map.layerFuture">Jalur masa depan</span>
+          <input type="checkbox" id="layerFutureToggle" checked>
+        </label>
+        <div class="map-slider-row">
+          <span data-i18n="map.layerGlow">Kecerahan atmosfer</span>
+          <input type="range" id="layerGlowSlider" min="0" max="100" value="60">
+        </div>
+      </div>
+    </div>
+
+    <div class="map-panel hidden" id="mapFilterPanel">
+      <div class="map-panel-head">
+        <h3 data-i18n="map.filtersTitle">Filter satelit</h3>
+        <button class="map-panel-close" data-close-panel aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="map-panel-body" id="mapFilterBody">
+        <p class="placeholder" data-i18n="idx.comparePlaceholder">Memuat data orbit satelit…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cards">
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-arrows-up-down card-icon" aria-hidden="true"></i><span data-i18n="idx.cardLat">Lintang</span></div>
+      <div class="value" id="lat">--</div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-arrows-left-right card-icon" aria-hidden="true"></i><span data-i18n="idx.cardLon">Bujur</span></div>
+      <div class="value" id="lon">--</div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-mountain card-icon" aria-hidden="true"></i><span data-i18n="idx.cardAlt">Ketinggian</span></div>
+      <div class="value ember" id="alt">--<span class="unit">km</span></div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-gauge-high card-icon" aria-hidden="true"></i><span data-i18n="idx.cardVel">Kecepatan</span></div>
+      <div class="value ember" id="vel">--<span class="unit">km/jam</span></div>
+      <div class="stat-compare" id="velCompare"></div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-sun card-icon" aria-hidden="true"></i><span data-i18n="idx.cardVis">Kondisi cahaya</span></div>
+      <div class="value cyan" id="vis">--</div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-circle-dot card-icon" aria-hidden="true"></i><span data-i18n="idx.cardFp">Radius jangkauan</span></div>
+      <div class="value" id="fp">--<span class="unit">km</span></div>
+    </div>
+    <div class="card">
+      <div class="label"><i class="fa-solid fa-map-location-dot card-icon" aria-hidden="true"></i><span data-i18n="idx.cardOver">Sedang di atas</span></div>
+      <div class="value cyan" id="overLocation">--</div>
+    </div>
+    <div class="card" id="distanceCard">
+      <div class="label"><i class="fa-solid fa-location-crosshairs card-icon" aria-hidden="true"></i><span data-i18n="idx.cardDistance">Jarak dari lokasimu</span></div>
+      <div class="value" id="distanceValue">--</div>
+      <button id="distanceLocateBtn" class="mini-locate-btn" data-i18n="idx.activateLocation">Aktifkan lokasi</button>
+    </div>
+    <div class="card wide-card" id="dayNightCard">
+      <div class="label"><i class="fa-solid fa-circle-half-stroke card-icon" aria-hidden="true"></i><span data-i18n="idx.cardDayNight">Terbit/terbenam orbit ISS berikutnya</span></div>
+      <div class="value cyan" id="dayNightState">--</div>
+      <div class="daynight-countdown" id="dayNightCountdown" data-i18n="idx.calculating">Menghitung…</div>
+    </div>
+  </section>
+
+  <div class="update-row">
+    <span id="lastUpdate" data-i18n="idx.noDataYet">Belum ada data</span>
+    <div class="update-row-controls">
+      <div class="unit-toggle" id="unitToggle" role="group" data-i18n-aria-label="set.unitAriaLabel" aria-label="Satuan">
+        <button class="unit-toggle-btn active" id="unitBtnMetric" data-unit="metric">km · km/jam</button>
+        <button class="unit-toggle-btn" id="unitBtnImperial" data-unit="imperial">mi · mph</button>
+      </div>
+      <button id="toggleBtn" data-i18n="js.pauseUpdates">Jeda pembaruan otomatis</button>
+    </div>
+  </div>
+
+  <section class="panel wide livepanel" id="liveFeedPanel">
+    <h2><i class="fa-solid fa-video panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.liveTitle">Siaran langsung dari ISS</span></h2>
+    <p class="panel-note" data-i18n="idx.liveNote">Video kamera luar ISS (siaran resmi NASA), dipadukan dengan peta jejak orbit &amp; telemetri yang diperbarui langsung dari data TLE/wheretheiss.at.</p>
+    <div class="live-grid">
+      <div class="live-video-wrap">
+        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+        <iframe id="liveVideoFrame"
+          src="https://www.youtube.com/embed/M3HKLzjvKPc?autoplay=1&mute=1&rel=0"
+          title="Siaran langsung ISS - NASA"
+          data-i18n-title="idx.liveVideoTitle"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+      <div class="live-telemetry">
+        <div class="groundtrack-wrap">
+          <canvas id="groundTrackCanvas" aria-hidden="true"></canvas>
+        </div>
+        <div class="live-stats">
+          <div><span class="k" data-i18n="idx.kLat">Lintang</span><span id="liveLat">--</span></div>
+          <div><span class="k" data-i18n="idx.kLon">Bujur</span><span id="liveLon">--</span></div>
+          <div><span class="k" data-i18n="idx.kAlt">Ketinggian</span><span id="liveAlt">--</span></div>
+          <div><span class="k" data-i18n="idx.kVel">Kecepatan</span><span id="liveVel">--</span></div>
+          <div class="live-over-row"><span class="k" data-i18n="idx.kOver">Sedang di atas</span><span id="liveOver">--</span></div>
+        </div>
+        <p class="live-updated" id="liveUpdated" data-i18n="js.connecting">Menghubungkan…</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="panel-grid">
+
+    <section class="panel wide" id="passPanel">
+      <h2><i class="fa-solid fa-eye panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.passTitle">Kapan ISS terlihat dari lokasimu?</span></h2>
+      <p class="panel-note" data-i18n="idx.passNote">Menghitung lintasan langsung dari data orbit (TLE) terbaru - ISS harus tersinari matahari, cukup tinggi di langit, dan langitmu sudah cukup gelap.</p>
+      <div class="pass-body" id="passBody">
+        <button id="locateBtn" class="locate-btn" data-i18n="idx.useMyLocation">Gunakan lokasiku</button>
+        <p class="placeholder" id="passPlaceholder" data-i18n="idx.passPlaceholder">Izinkan akses lokasi untuk melihat jadwal lintasan ISS di atas langitmu.</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="transitPanel">
+      <h2><i class="fa-solid fa-circle-half-stroke panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.transitTitle">Transit ISS di depan Matahari/Bulan</span></h2>
+      <p class="panel-note" data-i18n="idx.transitNote">Momen langka ISS lewat tepat di depan piringan matahari atau bulan dari lokasimu - cuma berlangsung 1–2 detik. Jalur transit di permukaan bumi cuma selebar beberapa km, jadi anggap ini perkiraan hobi, bukan jaminan pasti kelihatan dari titik persis kamu berdiri.</p>
+      <div class="pass-body" id="transitBody">
+        <button id="transitLocateBtn" class="locate-btn" data-i18n="idx.useMyLocation">Gunakan lokasiku</button>
+        <p class="placeholder" id="transitPlaceholder" data-i18n="idx.transitPlaceholder">Izinkan akses lokasi untuk mencari transit ISS 10 hari ke depan.</p>
+      </div>
+    </section>
+
+    <section class="panel wide">
+      <h2><i class="fa-solid fa-chart-line panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.historyTitle">Histori ketinggian &amp; kecepatan</span></h2>
+      <p class="panel-note" data-i18n="idx.historyNote">Rekaman beberapa jam terakhir dari perangkatmu sendiri - data terus terkumpul selama halaman ini kamu buka atau kunjungi lagi.</p>
+      <div class="history-body" id="historyBody">
+        <div class="history-chart-wrap">
+          <canvas id="historyChart" aria-hidden="true"></canvas>
+        </div>
+        <p class="placeholder" id="historyPlaceholder" data-i18n="idx.historyPlaceholder">Mengumpulkan data histori…</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><i class="fa-solid fa-cloud-sun panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.weatherTitle">Cuaca di titik orbit</span></h2>
+      <p class="panel-note" data-i18n="idx.weatherNote">Kondisi cuaca saat ini tepat di koordinat bumi yang sedang dilintasi ISS, dari Open-Meteo.</p>
+      <div class="weather-body" id="weatherBody">
+        <p class="placeholder" data-i18n="idx.weatherPlaceholder">Menunggu posisi ISS…</p>
+      </div>
+    </section>
+
+    <section class="panel" id="issWindowPanel">
+      <h2><i class="fa-solid fa-star-half-stroke panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.windowTitle">Kalau aku lagi di jendela ISS…</span></h2>
+      <p class="panel-note" data-i18n="idx.windowNote">Simulasi kasar dari data yang sama dengan kartu statistik di atas: kondisi cahaya & wilayah yang sedang dilintasi ISS saat ini.</p>
+      <div class="iss-window" id="issWindow">
+        <div class="iss-window-frame">
+          <div class="iss-window-sky" id="issWindowSky">
+            <div class="iss-window-curve"></div>
+          </div>
+        </div>
+        <div class="iss-window-caption">
+          <span class="iss-window-state" id="issWindowState">--</span>
+          <span class="iss-window-below" id="issWindowBelow">--</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><i class="fa-solid fa-user-astronaut panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.crewTitle">Awak di luar angkasa</span></h2>
+      <p class="panel-note" data-i18n="idx.crewNote">Semua orang yang sedang berada di luar atmosfer Bumi saat ini - negara asal & lama misi dari Open Notify dan basis data komunitas ISS.</p>
+      <div class="crew-body" id="crewBody">
+        <p class="placeholder" data-i18n="idx.crewPlaceholder">Memuat data awak…</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="dockingPanel">
+      <h2><i class="fa-solid fa-plug-circle-bolt panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.dockingTitle">Pesawat yang terhubung ke ISS</span></h2>
+      <p class="panel-note" data-i18n="idx.dockingNote">Semua pesawat luar angkasa yang sedang docking/berthing di ISS saat ini beserta posisi portnya, dari basis data komunitas ISS.</p>
+      <div class="docking-body" id="dockingBody">
+        <p class="placeholder" data-i18n="idx.dockingPlaceholder">Memuat data docking…</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="crewTimelinePanel">
+      <h2><i class="fa-solid fa-timeline panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.crewTimelineTitle">Jadwal harian awak ISS</span></h2>
+      <div class="crew-timeline-body" id="crewTimelineBody">
+        <div class="crew-timeline-clock">
+          <span class="crew-timeline-clock-value" id="crewTimelineClock">--:--</span>
+          <span class="crew-timeline-clock-label">UTC</span>
+        </div>
+        <div class="crew-timeline-track" id="crewTimelineTrack" role="img" aria-label="Jadwal harian awak ISS dalam 24 jam GMT">
+          <div class="crew-timeline-now" id="crewTimelineNow"></div>
+        </div>
+        <div class="crew-timeline-scale">
+          <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
+        </div>
+        <div class="crew-timeline-legend" id="crewTimelineLegend"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="activityPanel">
+      <h2><i class="fa-solid fa-diagram-project panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.activityTitle">Aktivitas di ISS</span></h2>
+      <p class="panel-note" data-i18n="idx.activityNote">Spacewalk (EVA) dan docking pesawat terbaru/terjadwal, dari Launch Library (The Space Devs). Data ini datang dari sumber pihak ketiga yang kadang telat diperbarui - anggap sebagai perkiraan, bukan jadwal resmi NASA.</p>
+      <div class="activity-body" id="activityBody">
+        <p class="placeholder" data-i18n="idx.activityPlaceholder">Memuat aktivitas ISS…</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="compareSatPanel">
+      <h2><i class="fa-solid fa-satellite panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.compareTitle">Satelit yang sedang dilacak</span></h2>
+      <p class="panel-note" data-i18n="idx.compareNote">ISS plus beberapa satelit lain yang posisinya dihitung langsung dari TLE (CelesTrak): stasiun luar angkasa Tiangong, teleskop Hubble, tiga satelit cuaca NOAA, dan dua satelit komunikasi Starlink. Gunakan filter kategori untuk mempersempit daftar, dan centang untuk memunculkan sebagai titik di globe 3D di atas.</p>
+
+      <div class="sat-add-box" id="satAddBox">
+        <p class="sat-add-label" data-i18n="idx.satAddLabel">Tidak nemu satelit yang kamu cari? Tambahkan sendiri:</p>
+        <form class="sat-add-row" id="satAddForm">
+          <input type="text" id="satAddInput" class="sat-add-input" data-i18n-placeholder="idx.satAddPlaceholder" placeholder="Nama satelit atau NORAD ID (mis. Starlink, 44714)" autocomplete="off">
+          <button type="submit" class="pass-action-btn sat-add-submit" id="satAddBtn"><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="idx.satAddSearchBtn">Cari</span></button>
+        </form>
+        <div id="satAddResults" class="sat-add-results"></div>
+      </div>
+
+      <div class="compare-body" id="compareBody">
+        <p class="placeholder" data-i18n="idx.comparePlaceholder">Memuat data orbit satelit…</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="tlePanel">
+      <h2><i class="fa-solid fa-code panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.tleTitle">Data TLE mentah</span></h2>
+      <p class="panel-note" data-i18n="idx.tleNote">Elemen orbit mentah (Two-Line Element) yang dipakai untuk semua perhitungan SGP4 di halaman ini - buat yang mau verifikasi data sendiri atau impor ke software lain (Skyfield, STK, GMAT, Stellarium, dll).</p>
+      <div class="tle-body" id="tleBody">
+        <p class="placeholder" id="tlePlaceholder" data-i18n="idx.tleLoading">Memuat data TLE…</p>
+      </div>
+    </section>
+
+    <section class="panel wide" id="playbackPanel">
+      <h2><i class="fa-solid fa-clock-rotate-left panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.playbackTitle">Playback jejak orbit 24 jam terakhir</span></h2>
+      <p class="panel-note" data-i18n="idx.playbackNote">Putar ulang lintasan ISS di globe selama 24 jam terakhir (dihitung mundur dari TLE saat ini - perkiraan hobi, bukan data historis presisi tinggi).</p>
+      <div class="playback-body" id="playbackBody">
+        <p class="placeholder" id="playbackPlaceholder" data-i18n="idx.playbackPlaceholder">Menunggu data orbit (TLE)…</p>
+        <div class="playback-controls hidden" id="playbackControls">
+          <button id="playbackToggleBtn" class="locate-btn small" data-i18n="js.playbackPlay">▶ Putar</button>
+          <input type="range" id="playbackSlider" min="0" max="720" value="720" step="1">
+          <select id="playbackSpeed">
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="4" selected>4×</option>
+            <option value="8">8×</option>
+          </select>
+          <span class="playback-time" id="playbackTime">--</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel wide" id="apodPanelSection">
+      <h2><i class="fa-solid fa-image panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.apodTitle">Foto luar angkasa hari ini</span></h2>
+      <p class="panel-note" data-i18n="idx.apodNote">Astronomy Picture of the Day dari NASA.</p>
+      <div class="apod-body" id="apodBody">
+        <p class="placeholder" data-i18n="idx.apodPlaceholder">Memuat foto hari ini…</p>
+      </div>
+    </section>
+
+    <section class="panel wide panel-ar" id="arPanel">
+      <h2><i class="fa-solid fa-camera panel-title-icon" aria-hidden="true"></i><span data-i18n="idx.arTitle">Mode AR - arahkan HP ke langit</span></h2>
+      <p class="panel-note" data-i18n="idx.arNote">Pakai kamera & sensor orientasi HP untuk menunjukkan arah ISS secara langsung di layar. Butuh izin lokasi, kompas, dan kamera. Bekerja paling baik di HP (Android/iOS), di luar ruangan, jauh dari medan magnet kuat.</p>
+      <div class="ar-body" id="arBody">
+        <button id="arActivateBtn" class="locate-btn ar-activate-btn"><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i><span data-i18n="idx.arActivate">Aktifkan Mode AR</span></button>
+        <p class="placeholder hidden" id="arUnsupportedNote" data-i18n="idx.arUnsupported">Mode AR butuh akses kamera, yang tidak tersedia di peramban/perangkat ini.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p id="footerText"></p>
+  </footer>
+
+</div>
+
+<div class="share-modal-backdrop hidden" id="shareModalBackdrop">
+  <div class="share-modal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+    <div class="share-modal-head">
+      <h3 id="shareModalTitle" data-i18n="share.previewTitle">Kartu ISS Now</h3>
+      <button class="map-panel-close" id="shareModalClose" data-i18n-aria-label="share.close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="share-modal-body">
+      <img id="shareModalImg" class="share-modal-img" alt="Kartu ISS Now" data-i18n-alt="share.previewTitle">
+      <p class="share-modal-note hidden" id="shareModalNote"></p>
+    </div>
+    <div class="share-modal-actions">
+      <button class="share-modal-btn primary" id="shareModalShareBtn"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> <span data-i18n="share.shareAction">Bagikan</span></button>
+      <button class="share-modal-btn" id="shareModalDownloadBtn"><i class="fa-solid fa-download" aria-hidden="true"></i> <span data-i18n="share.downloadAction">Unduh gambar</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="sat-detail-modal-backdrop hidden" id="satDetailModalBackdrop">
+  <div class="sat-detail-modal" role="dialog" aria-modal="true" aria-labelledby="satDetailModalTitle">
+    <div class="share-modal-head">
+      <h3 id="satDetailModalTitle">--</h3>
+      <button class="map-panel-close" id="satDetailModalClose" data-i18n-aria-label="js.satInfoClose" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sat-detail-modal-body">
+      <div class="sat-detail-photo-wrap hidden" id="satDetailPhotoWrap">
+        <img class="sat-detail-photo" id="satDetailPhoto" alt="">
+      </div>
+      <div class="sat-detail-stats">
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoAlt">Ketinggian</span><span id="satDetailAlt">--</span></div>
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoVel">Kecepatan</span><span id="satDetailVel">--</span></div>
+        <div class="sat-info-row"><span class="k" data-i18n="js.satInfoPos">Posisi</span><span id="satDetailPos">--</span></div>
+      </div>
+      <p class="sat-detail-extract" id="satDetailExtract" data-i18n="js.satDetailLoading">Memuat info...</p>
+      <p class="sat-detail-source hidden" id="satDetailSource" data-i18n="js.satDetailSource">Ringkasan dari Wikipedia.</p>
+    </div>
+    <div class="share-modal-actions">
+      <a class="share-modal-btn primary hidden" id="satDetailWikiLink" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <span data-i18n="js.satInfoOpenWiki">Buka di Wikipedia</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var f = document.getElementById('footerText');
+  if(!f || !window.I18N) return;
+  f.innerHTML = I18N.t('idx.footer', {
+    wheretheiss: '<a href="https://wheretheiss.at/" target="_blank" rel="noopener">Where the ISS at?</a>',
+    openmeteo: '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>',
+    opennotify: '<a href="http://open-notify.org/" target="_blank" rel="noopener">Open Notify</a>',
+    bigdatacloud: '<a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener">BigDataCloud</a>',
+    nasa: '<a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA</a>',
+    celestrak: '<a href="https://celestrak.org/" target="_blank" rel="noopener">CelesTrak</a>',
+    issapis: '<a href="https://github.com/corquaid/international-space-station-APIs" target="_blank" rel="noopener">ISS Data</a>'
+  });
+})();
+</script>
+<script>
+(function(){
+  var btn=document.getElementById('hamburgerBtn');
+  var links=document.getElementById('siteNavLinks');
+  if(!btn||!links)return;
+  function close(){
+    links.classList.remove('open');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+  }
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    var open=links.classList.toggle('open');
+    btn.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  links.addEventListener('click',function(e){
+    if(e.target.tagName==='A')close();
+  });
+  document.addEventListener('click',function(e){
+    if(!links.contains(e.target)&&!btn.contains(e.target))close();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape')close();
+  });
+})();
+</script>
+<script>
+(function(){
+  var el = document.getElementById('appLoadingLottie');
+  if(!el || !window.lottie) return;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  lottie.loadAnimation({
+    container: el,
+    renderer: 'svg',
+    loop: !reduceMotion,
+    autoplay: true,
+    path: 'https://lottie.host/40081b16-d7aa-44bf-bc5b-28992c902581/CTeDPP4K7s.json'
+  });
+})();
+</script>
+<script src="astro.js"></script>
+<script src="starfield-data.js"></script>
+<script src="globe.js"></script>
+<script src="ar.js?v=pano3"></script>
+<script src="script.js"></script>
+<script src="map-controls.js"></script>
+<script src="share-card.js"></script>
+</body>
+</html>

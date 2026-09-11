@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - Pengaturan</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="theme.js"></script>
+<script src="menu-color.js"></script>
+<script src="i18n.js"></script>
+<script src="motion.js"></script>
+<script src="push-alarm.js" defer></script>
+</head>
+<body>
+
+<div class="site-nav-bar">
+  <nav class="site-nav">
+    <a class="site-brand" href="index.html" aria-label="ISTrack - beranda">
+      <img class="site-brand-logo" src="assets/istrack-icon.png" alt="">
+      <span class="site-brand-text">ISTrack</span>
+    </a>
+    <button class="hamburger-btn" id="hamburgerBtn" data-i18n-aria-label="nav.openMenu" aria-label="Buka menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="site-nav-links" id="siteNavLinks">
+      <a href="index.html" class="site-nav-link"><i class="fa-solid fa-satellite nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.iss">Pelacak ISS</span></a>
+      <a href="news.html" class="site-nav-link"><i class="fa-regular fa-newspaper nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.news">Warta</span></a>
+      <a href="mechanical.html" class="site-nav-link"><i class="fa-solid fa-wave-square nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.mechanical">MECHANICAL</span></a>
+      <a href="arvi.html" class="site-nav-link"><i class="fa-solid fa-camera nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.arvi">ISFR-ARVI</span></a>
+      <a href="dokumentasi.html" class="site-nav-link"><i class="fa-solid fa-folder-open nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.docs">Dokumentasi</span></a>
+      <a href="settings.html" class="site-nav-link active"><i class="fa-solid fa-gear nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.settings">Pengaturan</span></a>
+    </div>
+  </nav>
+</div>
+
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow" data-i18n="set.eyebrow">Pengaturan</p>
+      <h1 data-i18n="set.h1">Atur ISTrack sesuai seleramu</h1>
+      <p class="lede" data-i18n="set.lede">Preferensi disimpan di peramban ini dan berlaku di semua halaman ISTrack.</p>
+    </div>
+  </header>
+
+  <div class="panel-grid">
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-language panel-title-icon" aria-hidden="true"></i><span data-i18n="set.langTitle">Bahasa</span></h2>
+      <p class="panel-note" data-i18n="set.langNote">Ganti bahasa antarmuka. Halaman akan dimuat ulang setelah kamu memilih.</p>
+      <div class="unit-toggle" id="langToggle" role="group" aria-label="Bahasa">
+        <button class="unit-toggle-btn" id="langBtnId" data-lang="id" data-i18n="set.langId">Indonesia</button>
+        <button class="unit-toggle-btn" id="langBtnEn" data-lang="en" data-i18n="set.langEn">English</button>
+      </div>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-ruler panel-title-icon" aria-hidden="true"></i><span data-i18n="set.unitTitle">Satuan</span></h2>
+      <p class="panel-note" data-i18n="set.unitNote">Berlaku untuk jarak & kecepatan di seluruh halaman Pelacak ISS.</p>
+      <div class="unit-toggle" id="settingsUnitToggle" role="group" aria-label="Satuan">
+        <button class="unit-toggle-btn" id="settingsUnitMetric" data-unit="metric" data-i18n="set.unitMetric">Metrik - km · km/jam</button>
+        <button class="unit-toggle-btn" id="settingsUnitImperial" data-unit="imperial" data-i18n="set.unitImperial">Imperial - mi · mph</button>
+      </div>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-palette panel-title-icon" aria-hidden="true"></i><span data-i18n="set.themeTitle">Tema tampilan</span></h2>
+      <p class="panel-note" data-i18n="set.themeNote">Pilih tema visual yang paling nyaman untukmu. Berlaku di semua halaman ISTrack.</p>
+      <div class="unit-toggle theme-toggle" id="themeToggle" role="group" aria-label="Tema tampilan">
+        <button class="unit-toggle-btn" id="themeBtnDark" data-theme="dark" data-i18n="set.themeDark">Gelap (default)</button>
+        <button class="unit-toggle-btn" id="themeBtnTrueBlack" data-theme="true-black" data-i18n="set.themeTrueBlack">True Black (OLED)</button>
+        <button class="unit-toggle-btn" id="themeBtnHighContrast" data-theme="high-contrast" data-i18n="set.themeHighContrast">Kontras tinggi</button>
+      </div>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-swatchbook panel-title-icon" aria-hidden="true"></i><span data-i18n="set.menuColorTitle">Warna menu</span></h2>
+      <p class="panel-note" data-i18n="set.menuColorNote">Ganti warna aksen menu navigasi di bagian atas sesuai selera. Nggak berlaku di halaman Warta, biar identitas warnanya tetap konsisten.</p>
+      <div class="menu-color-row" id="menuColorRow" role="group" aria-label="Warna menu">
+        <button type="button" class="color-swatch color-swatch-default" data-color="" data-i18n-aria-label="set.menuColorDefault" aria-label="Default"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></button>
+        <button type="button" class="color-swatch" data-color="#ff7a45" style="--sw:#ff7a45" data-i18n-aria-label="set.menuColorEmber" aria-label="Ember"><i class="fa-solid fa-check color-swatch-check" aria-hidden="true"></i></button>
+        <button type="button" class="color-swatch" data-color="#a78bfa" style="--sw:#a78bfa" data-i18n-aria-label="set.menuColorViolet" aria-label="Ungu"><i class="fa-solid fa-check color-swatch-check" aria-hidden="true"></i></button>
+        <button type="button" class="color-swatch" data-color="#fb7185" style="--sw:#fb7185" data-i18n-aria-label="set.menuColorRose" aria-label="Merah muda"><i class="fa-solid fa-check color-swatch-check" aria-hidden="true"></i></button>
+        <button type="button" class="color-swatch" data-color="#fbbf24" style="--sw:#fbbf24" data-i18n-aria-label="set.menuColorGold" aria-label="Kuning emas"><i class="fa-solid fa-check color-swatch-check" aria-hidden="true"></i></button>
+        <button type="button" class="color-swatch" data-color="#84cc16" style="--sw:#84cc16" data-i18n-aria-label="set.menuColorLime" aria-label="Hijau lime"><i class="fa-solid fa-check color-swatch-check" aria-hidden="true"></i></button>
+        <label class="color-swatch color-swatch-custom" id="menuColorCustomSwatch" data-i18n-aria-label="set.menuColorCustomLabel" aria-label="Warna kustom">
+          <input type="color" id="menuColorCustomInput" value="#5fd3c4">
+          <i class="fa-solid fa-eye-dropper" aria-hidden="true"></i>
+        </label>
+      </div>
+      <button type="button" class="menu-color-reset-btn" id="menuColorResetBtn" data-i18n="set.menuColorReset">Kembalikan ke default</button>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-universal-access panel-title-icon" aria-hidden="true"></i><span data-i18n="set.a11yTitle">Aksesibilitas</span></h2>
+      <p class="panel-note" data-i18n="set.a11yNote">Pengaturan untuk pengguna dengan gangguan penglihatan atau yang memakai pembaca layar (screen reader).</p>
+      <label class="map-toggle-row">
+        <span data-i18n="set.a11yAutoRead">Bacakan status ISS otomatis setiap 60 detik</span>
+        <input type="checkbox" id="a11yAutoReadToggle">
+      </label>
+      <label class="map-toggle-row">
+        <span data-i18n="set.a11yColorblind">Mode warna ramah buta-warna untuk marker satelit</span>
+        <input type="checkbox" id="a11yColorblindToggle">
+      </label>
+      <p class="panel-note" data-i18n="set.a11yColorblindNote">Ganti palet warna satelit di peta &amp; AR jadi versi yang dibedakan lewat kecerahan per kategori (aman untuk protanopia, deuteranopia, dan tritanopia), bukan warna acak. Berlaku setelah Pelacak ISS dimuat ulang.</p>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-triangle-exclamation panel-title-icon" aria-hidden="true"></i><span>Alarm Gempa (ISFR-ARVI)</span></h2>
+      <p class="panel-note">Aktifkan sekali di sini, dan kamu akan tetap dapat notifikasi alarm gempa walau sedang buka halaman ISTrack lain (Pelacak ISS, Warta, dll) — bahkan kalau tab-nya ditutup atau HP terkunci. Gak perlu buka halaman ISFR-ARVI dulu.</p>
+      <label class="map-toggle-row">
+        <span>Terima alarm gempa di latar belakang</span>
+        <input type="checkbox" id="istrackPushAlarmToggle">
+      </label>
+      <p class="panel-note" id="istrackPushAlarmStatus">Mengecek status…</p>
+    </section>
+
+    <section class="panel wide settings-panel">
+      <h2><i class="fa-solid fa-circle-info panel-title-icon" aria-hidden="true"></i><span data-i18n="set.aboutTitle">Tentang ISTrack</span></h2>
+      <p class="panel-note" data-i18n="set.aboutNote">ISTrack melacak posisi Stasiun Luar Angkasa Internasional secara langsung memakai data TLE/wheretheiss.at, lalu memadukannya dengan cuaca, awak, dan berita antariksa.</p>
+      <div class="source-chip-row">
+        <span class="source-chip">wheretheiss.at</span>
+        <span class="source-chip">Open-Meteo</span>
+        <span class="source-chip">CelesTrak</span>
+        <span class="source-chip">NASA Open APIs</span>
+        <span class="source-chip">Open Notify</span>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('hamburgerBtn');
+  var links=document.getElementById('siteNavLinks');
+  if(btn && links){
+    function close(){
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var open=links.classList.toggle('open');
+      btn.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    links.addEventListener('click',function(e){
+      if(e.target.tagName==='A')close();
+    });
+    document.addEventListener('click',function(e){
+      if(!links.contains(e.target)&&!btn.contains(e.target))close();
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape')close();
+    });
+  }
+
+  var langBtnId = document.getElementById('langBtnId');
+  var langBtnEn = document.getElementById('langBtnEn');
+  function refreshLangButtons(){
+    var lang = I18N.getLang();
+    langBtnId.classList.toggle('active', lang === 'id');
+    langBtnEn.classList.toggle('active', lang === 'en');
+  }
+  refreshLangButtons();
+  langBtnId.addEventListener('click', function(){ if(I18N.getLang() !== 'id') I18N.setLang('id'); });
+  langBtnEn.addEventListener('click', function(){ if(I18N.getLang() !== 'en') I18N.setLang('en'); });
+
+  var UNIT_KEY = 'istrack_units';
+  var unitMetricBtn = document.getElementById('settingsUnitMetric');
+  var unitImperialBtn = document.getElementById('settingsUnitImperial');
+  function getUnit(){
+    var saved = null;
+    try{ saved = localStorage.getItem(UNIT_KEY); }catch(e){}
+    return saved === 'imperial' ? 'imperial' : 'metric';
+  }
+  function setUnit(u){
+    try{ localStorage.setItem(UNIT_KEY, u); }catch(e){}
+    refreshUnitButtons();
+  }
+  function refreshUnitButtons(){
+    var u = getUnit();
+    unitMetricBtn.classList.toggle('active', u === 'metric');
+    unitImperialBtn.classList.toggle('active', u === 'imperial');
+  }
+  refreshUnitButtons();
+  unitMetricBtn.addEventListener('click', function(){ setUnit('metric'); });
+  unitImperialBtn.addEventListener('click', function(){ setUnit('imperial'); });
+
+  var themeButtons = document.querySelectorAll('#themeToggle .unit-toggle-btn');
+  function refreshThemeButtons(){
+    var current = window.ISTrackTheme ? window.ISTrackTheme.getTheme() : 'dark';
+    themeButtons.forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-theme') === current);
+    });
+  }
+  refreshThemeButtons();
+  themeButtons.forEach(function(b){
+    b.addEventListener('click', function(){
+      if(!window.ISTrackTheme) return;
+      window.ISTrackTheme.setTheme(b.getAttribute('data-theme'));
+      refreshThemeButtons();
+    });
+  });
+
+  var menuColorRow = document.getElementById('menuColorRow');
+  var menuColorCustomSwatch = document.getElementById('menuColorCustomSwatch');
+  var menuColorCustomInput = document.getElementById('menuColorCustomInput');
+  var menuColorResetBtn = document.getElementById('menuColorResetBtn');
+
+  function refreshMenuColorUI(){
+    if(!window.ISTrackMenuColor || !menuColorRow) return;
+    var current = window.ISTrackMenuColor.getMenuColor();
+    var matchedPreset = false;
+    menuColorRow.querySelectorAll('.color-swatch[data-color]').forEach(function(sw){
+      var c = sw.getAttribute('data-color');
+      if(c === ''){
+        sw.classList.toggle('active', !current);
+      } else {
+        var isActive = current === c;
+        sw.classList.toggle('active', isActive);
+        if(isActive) matchedPreset = true;
+      }
+    });
+    if(current){
+      if(menuColorCustomSwatch) menuColorCustomSwatch.style.setProperty('--sw', current);
+      if(menuColorCustomInput) menuColorCustomInput.value = current;
+      if(menuColorCustomSwatch) menuColorCustomSwatch.classList.toggle('active', !matchedPreset);
+    } else if(menuColorCustomSwatch){
+      menuColorCustomSwatch.classList.remove('active');
+    }
+  }
+  refreshMenuColorUI();
+
+  if(menuColorRow){
+    menuColorRow.querySelectorAll('.color-swatch[data-color]').forEach(function(sw){
+      sw.addEventListener('click', function(){
+        if(!window.ISTrackMenuColor) return;
+        var c = sw.getAttribute('data-color');
+        if(c === ''){ window.ISTrackMenuColor.resetMenuColor(); }
+        else { window.ISTrackMenuColor.setMenuColor(c); }
+        refreshMenuColorUI();
+      });
+    });
+  }
+  if(menuColorCustomInput){
+    menuColorCustomInput.addEventListener('input', function(){
+      if(!window.ISTrackMenuColor) return;
+      window.ISTrackMenuColor.setMenuColor(menuColorCustomInput.value);
+      refreshMenuColorUI();
+    });
+  }
+  if(menuColorResetBtn){
+    menuColorResetBtn.addEventListener('click', function(){
+      if(!window.ISTrackMenuColor) return;
+      window.ISTrackMenuColor.resetMenuColor();
+      refreshMenuColorUI();
+    });
+  }
+
+  var AUTOREAD_KEY = 'istrack_a11y_autoread';
+  var autoReadToggle = document.getElementById('a11yAutoReadToggle');
+  if(autoReadToggle){
+    var savedAutoRead = false;
+    try{ savedAutoRead = localStorage.getItem(AUTOREAD_KEY) === '1'; }catch(e){}
+    autoReadToggle.checked = savedAutoRead;
+    autoReadToggle.addEventListener('change', function(){
+      try{ localStorage.setItem(AUTOREAD_KEY, autoReadToggle.checked ? '1' : '0'); }catch(e){}
+    });
+  }
+
+  var COLORBLIND_KEY = 'istrack_a11y_colorblind';
+  var colorblindToggle = document.getElementById('a11yColorblindToggle');
+  if(colorblindToggle){
+    var savedColorblind = false;
+    try{ savedColorblind = localStorage.getItem(COLORBLIND_KEY) === '1'; }catch(e){}
+    colorblindToggle.checked = savedColorblind;
+    colorblindToggle.addEventListener('change', function(){
+      try{ localStorage.setItem(COLORBLIND_KEY, colorblindToggle.checked ? '1' : '0'); }catch(e){}
+    });
+  }
+})();
+</script>
+</body>
+</html>

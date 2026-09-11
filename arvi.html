@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - ISFR-ARVI</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="theme.js"></script>
+<script src="menu-color.js"></script>
+<script src="i18n.js"></script>
+<script src="motion.js"></script>
+</head>
+<body class="arvi-page arvi-fullmap">
+
+<div id="arviBoot" class="arvi-boot" role="status" aria-live="polite">
+  <div class="arvi-boot-glow" aria-hidden="true"></div>
+  <img class="arvi-boot-logo" src="assets/isfr-arvi-logo-white.png" alt="ISFR-ARVI">
+  <div class="arvi-boot-bar"><span></span></div>
+  <p class="arvi-boot-status" id="arviBootStatus">Mengecek semua servis…</p>
+</div>
+
+<div class="site-nav-bar">
+  <nav class="site-nav">
+    <a class="site-brand" href="index.html" aria-label="ISTrack - beranda">
+      <img class="site-brand-logo" src="assets/istrack-icon.png" alt="">
+      <span class="site-brand-text">ISTrack</span>
+    </a>
+    <button class="hamburger-btn" id="hamburgerBtn" data-i18n-aria-label="nav.openMenu" aria-label="Buka menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="site-nav-links" id="siteNavLinks">
+      <a href="index.html" class="site-nav-link"><i class="fa-solid fa-satellite nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.iss">Pelacak ISS</span></a>
+      <a href="news.html" class="site-nav-link"><i class="fa-regular fa-newspaper nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.news">Warta</span></a>
+      <a href="mechanical.html" class="site-nav-link"><i class="fa-solid fa-wave-square nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.mechanical">MECHANICAL</span></a>
+      <a href="arvi.html" class="site-nav-link active"><i class="fa-solid fa-camera nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.arvi">ISFR-ARVI</span></a>
+      <a href="dokumentasi.html" class="site-nav-link"><i class="fa-solid fa-folder-open nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.docs">Dokumentasi</span></a>
+      <a href="settings.html" class="site-nav-link"><i class="fa-solid fa-gear nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.settings">Pengaturan</span></a>
+    </div>
+  </nav>
+</div>
+
+<canvas id="stars"></canvas>
+
+<div class="arvi-toast-stack" id="arviToastStack" aria-live="polite"></div>
+
+<div class="arvi-quake-alarm" id="arviQuakeAlarm" hidden role="alertdialog" aria-live="assertive" aria-label="Peringatan gempa bumi">
+  <div class="arvi-quake-alarm-inner">
+    <i class="fa-solid fa-triangle-exclamation arvi-quake-alarm-icon" aria-hidden="true"></i>
+    <p class="arvi-quake-alarm-kicker">PERINGATAN!</p>
+    <p class="arvi-quake-alarm-source" id="arviQuakeAlarmSource">Sumber: USGS</p>
+    <p class="arvi-quake-alarm-mag">GEMPA M <span id="arviQuakeAlarmMag">0.0</span></p>
+    <p class="arvi-quake-alarm-place" id="arviQuakeAlarmPlace">-</p>
+    <p class="arvi-quake-alarm-time" id="arviQuakeAlarmTime">-</p>
+    <div class="arvi-tsunami-strip" id="arviTsunamiStrip" hidden role="alert">
+      <i class="fa-solid fa-water" aria-hidden="true"></i>
+      <span>BERPOTENSI TSUNAMI — segera menjauh dari pantai, ikuti arahan BMKG/BNPB setempat</span>
+    </div>
+    <p class="arvi-quake-alarm-caution">BERHATI-HATI DAN TETAP <em>STAY SAFE</em></p>
+    <p class="arvi-quake-alarm-note">Data: USGS &amp; BMKG (Badan Meteorologi, Klimatologi dan Geofisika). Bukan peringatan dini resmi seperti EEW Jepang - info ini baru tercatat SETELAH gempa terjadi, bukan sebelum guncangan datang. Ikuti arahan BMKG/BNPB setempat.</p>
+    <div class="arvi-quake-alarm-actions">
+      <button type="button" class="arvi-quake-alarm-btn arvi-quake-alarm-btn-safe" id="arviQuakeAlarmSafe">
+        <i class="fa-solid fa-check" aria-hidden="true"></i> Saya Aman
+      </button>
+      <button type="button" class="arvi-quake-alarm-btn arvi-quake-alarm-btn-report" id="arviQuakeAlarmReport">
+        <i class="fa-solid fa-flag" aria-hidden="true"></i> Laporkan
+      </button>
+    </div>
+    <button type="button" class="arvi-quake-alarm-dismiss" id="arviQuakeAlarmDismiss">Tutup</button>
+  </div>
+</div>
+
+<div class="arvi-report-modal" id="arviReportModal" hidden>
+  <div class="arvi-report-modal-inner">
+    <button type="button" class="arvi-report-modal-close" id="arviReportModalClose" aria-label="Tutup laporan">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+    <h3>Laporkan Dampak Gempa</h3>
+    <p class="arvi-report-modal-context" id="arviReportContext">M - · -</p>
+    <label class="arvi-report-field">
+      <span>Guncangan yang kamu rasakan</span>
+      <select id="arviReportFelt">
+        <option value="Tidak terasa">Tidak terasa</option>
+        <option value="Lemah" selected>Lemah</option>
+        <option value="Sedang">Sedang</option>
+        <option value="Kuat">Kuat</option>
+        <option value="Ada kerusakan">Ada kerusakan</option>
+      </select>
+    </label>
+    <label class="arvi-report-field">
+      <span>Catatan (opsional)</span>
+      <textarea id="arviReportNote" rows="3" placeholder="Contoh: barang di rak jatuh, listrik padam..."></textarea>
+    </label>
+    <p class="arvi-report-modal-hint">Laporan disimpan lokal di perangkat ini saja - situs ini gak punya server pusat buat kumpulin laporan warga. Bagikan ke keluarga/grup lewat WhatsApp, atau cek laporan resmi BMKG.</p>
+    <div class="arvi-report-modal-actions">
+      <button type="button" class="arvi-quake-alarm-btn arvi-quake-alarm-btn-safe" id="arviReportSave">Simpan Lokal</button>
+      <a class="arvi-quake-alarm-btn arvi-quake-alarm-btn-report" id="arviReportWa" href="#" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Bagikan WA
+      </a>
+    </div>
+    <a class="arvi-report-modal-bmkg-link" href="https://www.bmkg.go.id/gempabumi/gempabumi-dirasakan" target="_blank" rel="noopener">
+      Lihat laporan resmi BMKG <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow" data-i18n="arvi.eyebrow">ISFR-ARVI</p>
+      <h1 data-i18n="arvi.h1">Peta &amp; Statistik Kebencanaan</h1>
+      <p class="lede" data-i18n="arvi.lede">Pantauan gempa bumi dan radar curah hujan secara langsung, dilengkapi titik api contoh dan persentase distribusi per wilayah untuk peneliti dan pengguna umum.</p>
+    </div>
+    <div class="status" id="arviMapStatus" role="status" aria-live="polite">Memuat data…</div>
+  </header>
+
+  <div class="arvi-layout">
+
+    <section class="panel wide" style="margin:0;">
+      <h2><i class="fa-solid fa-map-location-dot panel-title-icon" aria-hidden="true"></i><span data-i18n="arvi.mapTitle">Peta Multi-Layer</span></h2>
+      <p class="panel-note" data-i18n="arvi.mapNote">Tap tombol filter (☰) di pojok kanan atas peta untuk atur layer, mode cuaca, dan rentang titik api. Titik api pakai data langsung NASA GIBS/FIRMS (VIIRS), tanpa API key.</p>
+
+      <div class="arvi-map-wrap">
+        <div id="arviMap"></div>
+
+        <button type="button" class="arvi-filter-toggle" id="arviFilterToggle" aria-expanded="false" aria-controls="arviFilterPanel" aria-label="Buka filter peta">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+        </button>
+
+        <div class="arvi-zoom-ctrl" id="arviZoomCtrl">
+          <button type="button" id="arviZoomIn" aria-label="Perbesar peta" title="Perbesar"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+          <button type="button" id="arviZoomOut" aria-label="Perkecil peta" title="Perkecil"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+        </div>
+
+
+        <div class="arvi-map-legend" id="arviMapLegend">
+          <button type="button" class="arvi-legend-toggle" id="arviLegendToggle" aria-expanded="false" aria-controls="arviLegendBody">
+            <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            <span>Legenda</span>
+            <span class="arvi-critical-count arvi-legend-badge" id="arviCriticalZoneWrapCollapsed" hidden>(<span id="arviCriticalZoneCountCollapsed">0</span> zona kritis)</span>
+            <i class="fa-solid fa-chevron-up arvi-legend-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="arvi-legend-body" id="arviLegendBody">
+            <span><i class="fa-solid fa-house-crack" style="color:#ff7a45;"></i> Earthquake (magnitude)</span><br>
+            <span class="arvi-filter-hint" style="margin:0 0 4px;">Cincin beriak di titik gempa = kejadian baru/masih &lt;1 jam</span>
+            <span><i class="fa-solid fa-water" style="color:#ff3b3b;"></i> Gempa berpotensi tsunami (BMKG)</span><br>
+            <span><i class="fa-solid fa-fire" style="color:#e2000d;"></i> Fire hotspot (NASA GIBS, live)</span><br>
+            <span><span class="dot" style="background:#b23bff;"></span>Rangkaian gempa (indikasi susulan)</span>
+            <div class="arvi-volcano-legend" id="arviVolcanoLegend">
+              <span class="arvi-density-title">Gunung berapi (PVMBG)</span>
+              <span><i class="fa-solid fa-mountain" style="color:#ff3b3b;"></i>Awas</span>
+              <span><i class="fa-solid fa-mountain" style="color:#ff7a45;"></i>Siaga</span>
+              <span><i class="fa-solid fa-mountain" style="color:#f2c94c;"></i>Waspada</span>
+            </div>
+            <div class="arvi-density-legend" id="arviDensityLegend">
+              <span class="arvi-density-title">Kepadatan titik api</span>
+              <span><span class="dot" style="background:#5fd3c4;"></span>Rendah</span>
+              <span><span class="dot" style="background:#f2c94c;"></span>Sedang</span>
+              <span><span class="dot" style="background:#ff7a45;"></span>Tinggi</span>
+              <span><span class="dot" style="background:#ff3b3b;"></span>Zona Kritis
+                <span class="arvi-critical-count" id="arviCriticalZoneWrap" hidden>(<span id="arviCriticalZoneCount">0</span> aktif)</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arvi-emergency-banner" id="arviEmergencyPanel" hidden role="alert">
+          <div class="arvi-emergency-head">
+            <span><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Info Darurat &amp; Evakuasi</span>
+            <button type="button" class="arvi-emergency-close" id="arviEmergencyClose" aria-label="Tutup info darurat"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+          </div>
+          <p class="arvi-emergency-summary" id="arviEmergencySummary">-</p>
+          <div class="arvi-emergency-contacts">
+            <a href="tel:112"><b>112</b> Darurat Terpadu</a>
+            <a href="tel:113"><b>113</b> Pemadam Kebakaran</a>
+            <a href="tel:117"><b>117</b> BNPB (Bencana Alam)</a>
+            <a href="tel:115"><b>115</b> SAR Nasional (Basarnas)</a>
+            <a href="tel:119"><b>118/119</b> Ambulans</a>
+          </div>
+          <p class="arvi-emergency-note">Untuk BPBD di daerahmu, hubungi <b>112</b> (diteruskan otomatis ke OPD setempat) atau cek <a href="https://bnpb.go.id" target="_blank" rel="noopener">bnpb.go.id</a>.</p>
+        </div>
+
+        <div class="arvi-dbz-legend" id="arviDbzLegend" aria-label="Radar intensity scale (dBZ)">
+          <span class="arvi-dbz-title">Intensity (dBZ)</span>
+          <div class="arvi-dbz-scale">
+            <span style="background:#00efe7;"></span>
+            <span style="background:#009cf7;"></span>
+            <span style="background:#0000f7;"></span>
+            <span style="background:#00ff00;"></span>
+            <span style="background:#03b703;"></span>
+            <span style="background:#ffff00;"></span>
+            <span style="background:#ecce00;"></span>
+            <span style="background:#fe9300;"></span>
+            <span style="background:#ff0000;"></span>
+            <span style="background:#bd0000;"></span>
+            <span style="background:#fe00fe;"></span>
+            <span style="background:#9c52c6;"></span>
+            <span style="background:#fefefe;"></span>
+          </div>
+          <div class="arvi-dbz-labels"><span>5</span><span>20</span><span>35</span><span>50</span><span>65</span><span>75+</span></div>
+        </div>
+
+        <button type="button" class="arvi-stats-toggle" id="arviStatsToggle" aria-expanded="false" aria-controls="arviStatsDrawer" aria-label="Open statistics">
+          <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+          <span class="arvi-notif-dot" id="arviFireNotifDot" hidden aria-hidden="true"></span>
+        </button>
+
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<!-- Filter panel & stats drawer live here at body root level (not nested inside
+     .arvi-map-wrap) so they escape .wrap's overflow:hidden clipping and always
+     paint above everything else, incl. the floating header card, with a real
+     blurred backdrop behind them - same pattern as the quake alarm modal above. -->
+<div class="arvi-modal-backdrop" id="arviModalBackdrop"></div>
+
+<div class="arvi-filter-panel" id="arviFilterPanel">
+  <div class="arvi-filter-head">
+    <span><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filter &amp; Layer</span>
+    <button type="button" class="arvi-filter-close" id="arviFilterClose" aria-label="Tutup filter"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <div class="arvi-filter-scroll">
+
+    <div class="arvi-filter-group arvi-filter-group-test">
+      <h4>Uji Coba Alarm</h4>
+      <button type="button" class="arvi-test-alarm-btn" id="arviTestAlarmBtn">
+        <i class="fa-solid fa-bell" aria-hidden="true"></i> Uji Coba Alarm Gempa
+      </button>
+      <button type="button" class="arvi-test-alarm-btn" id="arviTestTsunamiBtn" style="margin-top:8px;">
+        <i class="fa-solid fa-water" aria-hidden="true"></i> Uji Coba Alarm Tsunami
+      </button>
+      <p class="arvi-filter-hint">Nyalain tampilan alarm full-layar + sirine + getar pakai data simulasi (bukan gempa/tsunami asli) - buat coba tombol "Saya Aman"/"Laporkan" atau ngecek suara &amp; getaran HP kamu.</p>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Peta Dasar</h4>
+      <div class="unit-toggle" id="arviBaseToggle" role="group" aria-label="Gaya peta dasar">
+        <button type="button" class="unit-toggle-btn active" data-base="dark">Gelap</button>
+        <button type="button" class="unit-toggle-btn" data-base="light">Terang</button>
+      </div>
+      <label class="arvi-check" style="margin-top:8px;"><input type="checkbox" id="arviLayerLabels"> Label jalan/wilayah (lapisan pucat di atas foto satelit)</label>
+      <p class="arvi-filter-hint">Mati = foto satelit polos tanpa overlay pucat. Nyala = nama jalan/kampung ikut muncul, tapi warnanya jadi agak pudar karena ditumpuk di atas foto.</p>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Layer Peta</h4>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerQuake" checked> Gempa Bumi (USGS, live)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerQuakeSequence" checked> Rangkaian Gempa (indikasi susulan)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerRadar" checked> Radar/Awan Cuaca (RainViewer)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerFireLive" checked> Fire Hotspots (NASA GIBS/FIRMS)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerFireStat"> Fire Hotspots (used for statistics)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerFireCluster" checked> Zona Kepadatan Titik Api (Zona Kritis)</label>
+      <label class="arvi-check"><input type="checkbox" id="arviLayerVolcano" checked> Gunung Berapi - Status Aktivitas (PVMBG/MAGMA)</label>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Notifikasi Browser</h4>
+      <p class="arvi-filter-hint">Dapat notifikasi dari browser (di luar tab ini) saat ada gempa M5+ atau zona kritis titik api baru — berguna kalau tab ini diminimize atau kamu sedang buka tab lain. Polling tetap butuh browser/tab tetap terbuka (bukan push server sungguhan).</p>
+      <label class="arvi-check"><input type="checkbox" id="arviPushToggle"> Aktifkan notifikasi browser</label>
+      <p class="arvi-key-status" id="arviPushStatus">Status: belum diaktifkan.</p>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Cuaca</h4>
+      <div class="unit-toggle" id="arviWeatherMode" role="group" aria-label="Jenis tampilan cuaca">
+        <button type="button" class="unit-toggle-btn" data-mode="radar"><i class="fa-solid fa-cloud-rain"></i> Radar Hujan</button>
+        <button type="button" class="unit-toggle-btn" data-mode="satellite"><i class="fa-solid fa-satellite"></i> Awan (Inframerah)</button>
+      </div>
+      <label class="arvi-snow-toggle">
+        <input type="checkbox" id="arviSnowToggle"> Tandai salju
+      </label>
+      <div class="arvi-radar-transport">
+        <button type="button" class="arvi-transport-btn" id="arviRadarPrev" aria-label="Frame sebelumnya"><i class="fa-solid fa-backward-step"></i></button>
+        <button type="button" class="arvi-transport-btn" id="arviRadarPlay" aria-label="Putar animasi"><i class="fa-solid fa-play"></i></button>
+        <button type="button" class="arvi-transport-btn" id="arviRadarNext" aria-label="Frame berikutnya"><i class="fa-solid fa-forward-step"></i></button>
+        <input type="range" id="arviRadarSlider" min="0" max="0" value="0" step="1">
+        <span class="arvi-radar-time" id="arviRadarTime">--</span>
+      </div>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Fire Hotspot Range</h4>
+      <div class="unit-toggle" id="arviRangeToggle" role="group" aria-label="Fire hotspot time range">
+        <button type="button" class="unit-toggle-btn" data-range="1">24 Hours</button>
+        <button type="button" class="unit-toggle-btn" data-range="2">48 Hours</button>
+        <button type="button" class="unit-toggle-btn" data-range="7">7 Days</button>
+      </div>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Cakupan Statistik & Notifikasi Titik Api</h4>
+      <p class="arvi-filter-hint">"Dunia" memantau titik api di semua negara (bukan cuma Indonesia) untuk alarm/notifikasi. Catatan jujur: data satelit ini TIDAK real-time sedetik di manapun - NASA sendiri baru menyediakan data ini dalam hitungan menit sampai jam setelah satelit lewat, jadi ini secepat yang secara fisik memungkinkan, bukan instan.</p>
+      <div class="unit-toggle" id="arviFireScopeToggle" role="group" aria-label="Cakupan statistik titik api">
+        <button type="button" class="unit-toggle-btn active" data-scope="idn">Indonesia</button>
+        <button type="button" class="unit-toggle-btn" data-scope="world">Dunia</button>
+      </div>
+    </div>
+
+    <div class="arvi-filter-group" id="arviRadiusGroup">
+      <h4>Lokasi Saya &amp; Alarm Personal</h4>
+      <label class="arvi-check"><input type="checkbox" id="arviRadiusToggle"> Aktifkan alarm gempa dekat lokasi saya (radius 50 km)</label>
+      <p class="arvi-filter-hint" id="arviRadiusStatus">Aktifkan ini biar alarm full-layar bunyi kalau ada gempa DALAM radius 50 km dari lokasimu sekarang (mis. kamu di Balikpapan, ada gempa M4.2 di Balikpapan → alarm langsung muncul) - butuh izin lokasi browser. Tanpa ini, alarm cuma bunyi buat gempa M5+ di mana pun di Indonesia. Radius ini juga dipakai buat filter tampilan gempa &amp; statistik titik api, tapi bukan layer raster titik api NASA.</p>
+      <p class="arvi-filter-hint">Mau pakai lokasi asli HP-mu tanpa nyalain tracking terus-menerus? Ada tombol "Gunakan Lokasi Saat Ini (GPS)" di panel Statistik (ikon pie chart) - sekali tap, ambil GPS asli sekali jalan.</p>
+    </div>
+
+    <div class="arvi-filter-group" id="arviPushBgGroup">
+      <h4>Alarm Latar Belakang (Push)</h4>
+      <label class="arvi-check"><input type="checkbox" id="arviPushBgToggle"> Tetap dapat alarm walau tab ditutup / HP terkunci</label>
+      <p class="arvi-filter-hint" id="arviPushBgStatus">Beda dari "Notifikasi browser" di atas - ini kirim alarm dari server kami (bukan dari tab ini), jadi tetap jalan walau situs ini gak dibuka. Butuh izin notifikasi browser. Kalau kamu udah aktifin "Lokasi Saya" di atas, lokasimu ikut dikirim ke server (cuma buat ngecek jarak ke gempa, gak dipakai buat hal lain) supaya gempa kecil di dekatmu juga ke-push, bukan cuma M5+.</p>
+    </div>
+
+    <div class="arvi-filter-group" id="arviFirmsKeyGroup">
+      <h4>FIRMS API Key (optional)</h4>
+      <p class="arvi-filter-hint">Without a key, the fire hotspot statistics on the right panel use sample data. Add a free MAP_KEY from FIRMS so the statistics use real fire hotspot data.</p>
+      <div class="arvi-key-row">
+        <input type="text" id="arviFirmsKeyInput" class="arvi-key-input" placeholder="Paste MAP_KEY here" autocomplete="off" spellcheck="false">
+        <button type="button" id="arviFirmsKeySave" class="arvi-key-save">Save</button>
+      </div>
+      <p class="arvi-filter-hint">Get one for free at <a href="https://firms.modaps.eosdis.nasa.gov/api/area/" target="_blank" rel="noopener">firms.modaps.eosdis.nasa.gov/api/area</a> (enter your email, the key appears instantly).</p>
+      <p class="arvi-key-status" id="arviFirmsKeyStatus">Status: using sample data (no MAP_KEY yet).</p>
+      <label class="arvi-filter-hint" for="arviFirmsSourceSelect" style="display:block; margin-top:10px;">Satellite source (switch if one satellite hasn't passed over yet)</label>
+      <select id="arviFirmsSourceSelect" class="arvi-key-input">
+        <option value="VIIRS_SNPP_NRT">VIIRS - Suomi NPP (default, 375m)</option>
+        <option value="VIIRS_NOAA20_NRT">VIIRS - NOAA-20 (375m)</option>
+        <option value="VIIRS_NOAA21_NRT">VIIRS - NOAA-21 (375m, newest)</option>
+        <option value="MODIS_NRT">MODIS - Terra/Aqua (1km, longer history)</option>
+      </select>
+    </div>
+
+    <div class="arvi-filter-group">
+      <h4>Kualitas Udara / AQI (OpenAQ, optional)</h4>
+      <p class="arvi-filter-hint">Asap kebakaran hutan sering lebih berbahaya dari titik apinya sendiri. Tambahkan API key gratis OpenAQ untuk melihat estimasi PM2.5 dari stasiun terdekat — dekat lokasimu (kalau "Lokasi Saya" aktif) atau dekat zona titik api terpadat.</p>
+      <div class="arvi-key-row">
+        <input type="text" id="arviOpenAqKeyInput" class="arvi-key-input" placeholder="Paste OpenAQ API key here" autocomplete="off" spellcheck="false">
+        <button type="button" id="arviOpenAqKeySave" class="arvi-key-save">Save</button>
+      </div>
+      <p class="arvi-filter-hint">Get one for free at <a href="https://explore.openaq.org/register" target="_blank" rel="noopener">explore.openaq.org/register</a>.</p>
+      <p class="arvi-key-status" id="arviOpenAqKeyStatus">Status: belum ada API key.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="arvi-stats-drawer" id="arviStatsDrawer">
+  <div class="arvi-stats-head">
+    <span><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Statistics</span>
+    <button type="button" class="arvi-stats-close" id="arviStatsClose" aria-label="Close statistics"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="arvi-stats-scroll">
+    <div class="arvi-stats-panel">
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-location-crosshairs panel-title-icon" aria-hidden="true"></i>Lokasi Saya</h3>
+        <p class="arvi-stat-note">Statistik &amp; radius di bawah ini dihitung dari lokasimu. Pakai GPS asli HP-mu (sekali ambil, bukan tracking terus-menerus) supaya angkanya sesuai posisimu sekarang.</p>
+        <button type="button" class="arvi-key-save" id="arviUseGpsBtn" style="width:100%;">📍 Gunakan Lokasi Saat Ini (GPS)</button>
+        <p class="arvi-key-status" id="arviUseGpsStatus">Status: belum pakai lokasi GPS.</p>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-chart-pie panel-title-icon" aria-hidden="true"></i>Event Distribution</h3>
+        <p class="arvi-stat-note">Comparison of earthquake events (live, USGS) vs fire hotspots<span class="arvi-demo-tag">DEMO</span> currently shown on the map.</p>
+        <div class="arvi-donut-wrap">
+          <canvas id="arviDonutChart"></canvas>
+        </div>
+        <div class="arvi-legend-inline" id="arviDonutCaption"></div>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-chart-line panel-title-icon" aria-hidden="true"></i>Tren Magnitudo Gempa</h3>
+        <p class="arvi-stat-note">Magnitudo maksimum per hari (garis, kiri) dan jumlah gempa per hari (batang, kanan) selama 30 hari terakhir - sumber USGS. Pilih wilayah untuk fokus ke satu area.</p>
+        <select id="arviMagTrendRegion" class="arvi-key-input arvi-region-select">
+          <option value="">Semua Wilayah</option>
+          <option value="sumatra">Sumatra</option>
+          <option value="jawa">Jawa</option>
+          <option value="kalimantan">Kalimantan</option>
+          <option value="sulawesi">Sulawesi</option>
+          <option value="nusatenggara">Nusa Tenggara</option>
+          <option value="maluku">Maluku</option>
+          <option value="papua">Papua</option>
+        </select>
+        <div class="arvi-donut-wrap arvi-trend-wrap">
+          <canvas id="arviMagTrendChart"></canvas>
+        </div>
+        <div class="arvi-legend-inline" id="arviMagTrendCaption"></div>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-smog panel-title-icon" aria-hidden="true"></i>Kualitas Udara (Asap Kebakaran)</h3>
+        <p class="arvi-stat-note">Estimasi PM2.5 dari stasiun OpenAQ terdekat - dekat lokasimu kalau "Lokasi Saya" aktif, atau dekat zona titik api terpadat. Butuh API key gratis OpenAQ lewat panel filter (☰).</p>
+        <div id="arviAqiBody" class="arvi-aqi-body"><p class="placeholder">Masukkan API key OpenAQ lewat panel filter (☰) untuk mengaktifkan.</p></div>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-mountain panel-title-icon" aria-hidden="true"></i>Status Gunung Berapi (PVMBG/MAGMA)</h3>
+        <p class="arvi-stat-note">Tingkat aktivitas gunung api aktif di Indonesia dari PVMBG/MAGMA Indonesia (Badan Geologi ESDM) - Normal, Waspada, Siaga, Awas. Diperbarui: <span id="arviVolcanoUpdated">-</span>.</p>
+        <div id="arviVolcanoCounts" class="arvi-volcano-counts"></div>
+        <div id="arviVolcanoList" class="arvi-notif-history"><p class="placeholder">Memuat data PVMBG…</p></div>
+        <a class="arvi-report-modal-bmkg-link" href="https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas" target="_blank" rel="noopener">
+          Buka MAGMA Indonesia <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-bell panel-title-icon" aria-hidden="true"></i>Riwayat Notifikasi</h3>
+        <p class="arvi-stat-note">Log update gempa (M5+), rangkaian gempa, dan titik api/zona kritis terbaru yang terdeteksi selama sesi ini.</p>
+        <div id="arviNotifHistoryList" class="arvi-notif-history"><p class="placeholder">Belum ada update baru di sesi ini.</p></div>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-layer-group panel-title-icon" aria-hidden="true"></i>Percentage by Region</h3>
+        <p class="arvi-stat-note">Example: "Kalimantan 60% Fire" - regions are grouped automatically from coordinates and split by disaster type. Useful for researchers spotting distribution patterns, and for a quick summary at a glance.</p>
+        <div id="arviRegionList"><p class="placeholder">Loading…</p></div>
+        <div class="arvi-legend-inline">
+          <span><i class="fa-solid fa-house-crack" style="color:#ff7a45;"></i> Earthquakes</span>
+          <span id="arviRegionFireLegend"><i class="fa-solid fa-fire" style="color:#5fd3c4;"></i> Fire hotspots (demo)</span>
+        </div>
+      </div>
+
+      <div class="arvi-stat-card">
+        <h3><i class="fa-solid fa-circle-info panel-title-icon" aria-hidden="true"></i>Data Source Notes</h3>
+        <p class="arvi-stat-note" style="margin-bottom:0;">
+          Earthquakes: USGS GeoJSON (real-time, last 30 days, M3.5+).<br>
+          Radar/clouds: RainViewer (real-time, last 2 hours animated + 30-minute forecast, NEXRAD-style dBZ color scheme, no API key needed).<br>
+          Fire hotspots (map): NASA GIBS/FIRMS VIIRS overlay - real-time, no API key needed.<br>
+          Fire hotspots (regional stats): sample data by default. Add a free FIRMS MAP_KEY via the map's filter button (☰) to use real per-coordinate fire hotspot data.<br>
+          Zona kritis: hotspot points are grouped into a ~55&nbsp;km grid; a cell with 30+ points in range is flagged "Zona Kritis" (dense cluster), not just a raw point tally.<br>
+          Rangkaian gempa: gempa M3.5+ dikelompokkan dalam grid ~33 km &amp; jendela 3 hari; 3+ gempa di sel yang sama ditandai sebagai indikasi rangkaian utama-susulan (bukan prediksi resmi BMKG).<br>
+          Kualitas udara: PM2.5 dari stasiun OpenAQ terdekat (butuh API key gratis), dikategorikan pakai ambang PM2.5 24 jam standar EPA sebagai pendekatan AQI - bukan perhitungan ISPU resmi.<br>
+          Info darurat: nomor kontak nasional (112/113/115/117/118/119) muncul otomatis saat "Lokasi Saya" aktif dan ada gempa/titik api dalam radius 50 km.<br>
+          Gunung berapi: status aktivitas (Normal/Waspada/Siaga/Awas) dari PVMBG/MAGMA Indonesia (Badan Geologi ESDM). MAGMA tidak menyediakan API JSON publik, jadi data diambil dengan membaca halaman status resminya lewat proxy CORS - sama seperti cara BMKG di atas diakses, tapi kali ini kontennya HTML (bukan JSON) sehingga lebih rentan berhenti cocok kalau PVMBG mengubah tampilan halamannya. Fitur bonus best-effort, bukan dependensi wajib - kalau gagal dimuat, panel menampilkan link langsung ke MAGMA Indonesia.<br>
+          Potensi tsunami: dibaca dari field "Potensi" pada data gempa resmi BMKG yang sama (autogempa.json) - BMKG sendiri yang menandai apakah satu kejadian gempa "Berpotensi tsunami" atau "Tidak berpotensi tsunami", jadi bukan perhitungan/prediksi dari situs ini. Kejadian berpotensi tsunami memicu alarm/badge terpisah dan (kalau notifikasi latar belakang diaktifkan) dikirim ke semua pengguna terdaftar tanpa dibatasi radius 50 km, karena ancaman tsunami tidak setempat seperti guncangan.<br>
+          Browser notifications: opt-in via the filter panel (☰) - fires an OS notification for M5+ quakes, tsunami-potential quakes, rangkaian gempa, elevated volcano status, and new critical fire zones while this tab is backgrounded. Requires the browser/tab to stay open.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('hamburgerBtn');
+  var links=document.getElementById('siteNavLinks');
+  if(btn && links){
+    function close(){
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var open=links.classList.toggle('open');
+      btn.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    links.addEventListener('click',function(e){
+      if(e.target.tagName==='A')close();
+    });
+    document.addEventListener('click',function(e){
+      if(!links.contains(e.target)&&!btn.contains(e.target))close();
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape')close();
+    });
+  }
+})();
+</script>
+<script src="arvi.js"></script>
+</body>
+</html>

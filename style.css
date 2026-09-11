@@ -1,0 +1,5273 @@
+:root{
+  --bg-deep:#000000;
+  --bg-panel:#0b1122;
+  --bg-panel-2:#0e1528;
+  --grid-line:#1c2744;
+  --grid-line-strong:#2a3a63;
+  --ember:#ff7a45;
+  --ember-dim:#7a3d24;
+  --cyan:#5fd3c4;
+  --star:#e9edf6;
+  --muted:#8493ae;
+  --danger:#ff6b6b;
+
+  --nav-accent:var(--cyan);
+}
+
+[data-theme="true-black"]{
+  --bg-panel:#000000;
+  --bg-panel-2:#000000;
+  --grid-line:#161616;
+  --grid-line-strong:#262626;
+  --star:#ffffff;
+  --muted:#949494;
+}
+
+[data-theme="high-contrast"]{
+  --bg-panel:#000000;
+  --bg-panel-2:#000000;
+  --grid-line:#ffffff;
+  --grid-line-strong:#ffffff;
+  --ember:#ffcc00;
+  --ember-dim:#8a6d00;
+  --cyan:#00e5ff;
+  --star:#ffffff;
+  --muted:#d6d6d6;
+  --danger:#ff5c5c;
+}
+[data-theme="high-contrast"] .panel,
+[data-theme="high-contrast"] .card,
+[data-theme="high-contrast"] .mapcard,
+[data-theme="high-contrast"] .map-panel{
+  border-width:2px;
+}
+
+*{box-sizing:border-box; min-width:0;}
+
+@media (prefers-reduced-motion: reduce){
+  header, .mapcard{animation:none; opacity:1; transform:none;}
+  #globe{transition:none; opacity:1;}
+  .map-panel{transition:none;}
+  .sat-info-popup{transition:none;}
+  .map-tool-btn{transition:background .15s ease, border-color .15s ease;}
+  .app-loading-spinner{animation:none;}
+  button, .card{transition:border-color .15s ease, background .15s ease; transform:none !important;}
+  button:hover, button:active, .card:hover{transform:none !important;}
+  .panel{transition:border-color .15s ease, box-shadow .15s ease;}
+  .panel:hover{transform:none !important;}
+  .ui-ripple{display:none;}
+  .ui-rise-in{animation:none; opacity:1; transform:none;}
+  .ui-reveal-pending{opacity:1; transform:none;}
+}
+
+body.app-is-loading{overflow:hidden;}
+
+.app-loading{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(20,32,58,0.9) 0%, rgba(3,5,12,0.98) 65%, #000 100%);
+  text-align:center;
+  padding:24px;
+  opacity:1;
+  visibility:visible;
+  transition:opacity .5s ease, visibility .5s ease;
+}
+.app-loading.app-loading-hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.app-loading-spinner{
+  width:160px;
+  max-width:52vw;
+  height:160px;
+}
+.app-loading-spinner svg{
+  width:100%;
+  height:100%;
+}
+.app-loading-title{
+  margin:0;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:22px;
+  letter-spacing:0.02em;
+  color:var(--star);
+}
+.app-loading-subtitle{
+  margin:0;
+  max-width:280px;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.site-nav-bar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(3,5,12,0.82);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+
+  box-shadow:0 1px 0 color-mix(in srgb, var(--nav-accent) 16%, transparent), 0 10px 24px -12px rgba(0,0,0,0.6);
+
+  padding-top:env(safe-area-inset-top,0px);
+}
+
+.site-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  max-width:1040px;
+  margin:0 auto;
+  padding:12px 20px;
+  padding-left:calc(20px + env(safe-area-inset-left,0px));
+  padding-right:calc(20px + env(safe-area-inset-right,0px));
+  position:relative;
+  z-index:2;
+}
+
+.site-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  border-radius:10px;
+  padding:2px;
+  transition:opacity .15s ease;
+}
+.site-brand:hover{opacity:0.85;}
+.site-brand-text{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:-0.01em;
+  color:var(--star);
+}
+.site-brand-logo{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+  flex:none;
+  filter:drop-shadow(0 0 6px rgba(95,211,196,0.35));
+}
+
+.site-nav-links{
+  display:flex;
+  gap:4px;
+}
+
+.site-nav-link{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  text-decoration:none;
+  padding:7px 14px;
+  border-radius:100px;
+  border:1px solid transparent;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  transition:color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.nav-link-icon{
+  font-size:11px;
+  color:inherit;
+  opacity:0.8;
+  transition:color .15s ease, opacity .15s ease;
+}
+
+.site-nav-link:hover{color:var(--star);}
+
+.site-nav-link.active{
+  color:var(--star);
+  background:var(--bg-panel);
+  border-color:var(--grid-line-strong);
+}
+.site-nav-link.active .nav-link-icon{
+  color:var(--nav-accent);
+  opacity:1;
+  filter:drop-shadow(0 0 4px color-mix(in srgb, var(--nav-accent) 60%, transparent));
+}
+
+.hamburger-btn{
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+
+  width:44px;
+  height:44px;
+  flex:none;
+  padding:0;
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line-strong);
+  border-radius:12px;
+  cursor:pointer;
+  z-index:3;
+  transition:background .15s ease, border-color .15s ease, transform .15s ease;
+}
+
+.hamburger-btn:hover{border-color:rgba(95,211,196,0.55);}
+.hamburger-btn:active{transform:scale(0.94);}
+
+.hamburger-btn span{
+  display:block;
+  width:18px;
+  height:2px;
+  background:var(--star);
+  border-radius:2px;
+  transition:transform .2s ease, opacity .2s ease;
+}
+
+.hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger-btn.open span:nth-child(2){opacity:0;}
+.hamburger-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+@media (max-width:640px){
+  .hamburger-btn{display:flex;}
+  .site-nav-links{
+    display:flex;
+    position:absolute;
+
+    top:calc(100% + 8px);
+    right:calc(20px + env(safe-area-inset-right,0px));
+    left:calc(20px + env(safe-area-inset-left,0px));
+    flex-direction:column;
+    gap:4px;
+    background:var(--bg-panel);
+    border:1px solid var(--grid-line-strong);
+    border-radius:14px;
+    padding:8px;
+
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    pointer-events:none;
+    transform:translateY(-6px);
+    transition:max-height .25s ease, opacity .18s ease, transform .18s ease;
+  }
+  .site-nav-links.open{
+    max-height:220px;
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0);
+  }
+  .site-nav-link{padding:10px 14px;justify-content:center;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-brand-orbit-dot,
+  .ar-opening-logo,
+  .ar-opening-orbit-dot,
+  .ar-calibration-hint,
+  .ar-calibration-dot,
+  .ar-calib-panel,
+  .ar-autocalib-panel,
+  .ar-info-card,
+  .ar-marker-dot,
+  .ar-marker-dot::after{
+    animation:none !important;
+  }
+}
+
+html{
+
+  overflow-x:hidden;
+  overflow-x:clip;
+  overscroll-behavior-x:none;
+  /* Hilangkan kotak highlight abu-abu/hitam yang suka "kedip" pas nge-tap
+     tombol di Android/iOS - salah satu penyebab UI kerasa buggy di HP. */
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:var(--bg-deep);
+  color:var(--star);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  min-height:100dvh; /* 100vh di HP gak ngitung address bar yg naik-turun, bikin layout "loncat" pas scroll; 100dvh ngikutin ukuran viewport aktual */
+  width:100%;
+  padding:28px 20px 60px;
+  position:relative;
+  overflow-x:hidden;
+  overflow-x:clip;
+  overscroll-behavior-x:none;
+  overscroll-behavior-y:none; /* biar scroll halaman gak mantul/pull-to-refresh gak sengaja kepicu pas geser cepat di HP */
+}
+
+#stars{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:1040px;
+  margin:0 auto;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+  position:relative;
+  animation:hero-in .7s cubic-bezier(.22,1,.36,1) both;
+}
+
+header::before{
+  content:'';
+  position:absolute;
+  top:-120px;
+  left:-80px;
+  width:420px;
+  height:320px;
+  background:radial-gradient(ellipse, rgba(95,211,196,0.14), transparent 65%);
+  pointer-events:none;
+  z-index:-1;
+}
+
+.eyebrow{
+  margin:0 0 8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--cyan);
+  letter-spacing:0.03em;
+}
+
+.eyebrow::before{
+  content:'';
+  width:14px;
+  height:1px;
+  background:var(--cyan);
+  opacity:0.7;
+}
+
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:clamp(28px,5vw,40px);
+  margin:0 0 10px;
+  letter-spacing:-0.01em;
+}
+
+.lede{
+  margin:0;
+  color:var(--muted);
+  font-size:14.5px;
+  max-width:52ch;
+  line-height:1.6;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--muted);
+  padding:7px 12px;
+  border:1px solid var(--grid-line-strong);
+  border-radius:100px;
+  background:var(--bg-panel);
+  white-space:nowrap;
+}
+
+.dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 0 0 rgba(95,211,196,.6);
+  animation:pulse 2s infinite;
+}
+.dot.err{background:var(--danger);animation:none;}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(95,211,196,.5);}
+  70%{box-shadow:0 0 0 8px rgba(95,211,196,0);}
+  100%{box-shadow:0 0 0 0 rgba(95,211,196,0);}
+}
+
+.mapcard{
+  background:linear-gradient(180deg,var(--bg-panel),var(--bg-panel-2));
+  border:1px solid var(--grid-line);
+  border-radius:18px;
+  padding:14px;
+  position:relative;
+  box-shadow:0 8px 28px rgba(0,0,0,0.28);
+  animation:hero-in .7s cubic-bezier(.22,1,.36,1) .12s both;
+}
+
+svg{display:block;width:100%;height:auto;border-radius:10px;}
+
+@keyframes hero-in{
+  from{opacity:0; transform:translateY(14px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.globewrap{
+  width:100%;
+  aspect-ratio:16/10;
+  border-radius:10px;
+  overflow:hidden;
+  background:#000000;
+  position:relative;
+}
+
+.globewrap::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,0.4) 100%);
+}
+#globe{
+  width:100%;
+  height:100%;
+  display:block;
+  cursor:grab;
+  opacity:0;
+  transition:opacity .8s ease;
+}
+#globe.globe-ready{opacity:1;}
+#globe:active{cursor:grabbing;}
+.globe-hint{
+  margin:8px 2px 0;
+  font-size:11.5px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.globe-labels{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:2;
+}
+.globe-label{
+  position:absolute;
+  left:0;
+  top:0;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  max-width:150px;
+  padding:3px 8px 3px 6px;
+  border-radius:100px;
+  background:rgba(3,5,12,0.72);
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  color:var(--star);
+  letter-spacing:.01em;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s ease;
+  will-change:transform, opacity;
+}
+.globe-label.visible{opacity:1;}
+.globe-label-iss{font-weight:700;}
+.globe-label-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  flex:none;
+  box-shadow:0 0 4px 0 currentColor;
+}
+.globe-label-text{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+@media (max-width:520px){
+  .globe-label{
+    max-width:96px;
+    font-size:9px;
+    padding:2px 7px 2px 5px;
+  }
+}
+
+.maplabel{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  fill:var(--muted);
+}
+
+.coordread{
+  position:absolute;
+  top:28px;left:28px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+  pointer-events:none;
+}
+.coordread b{color:var(--star);font-weight:500;}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+
+.card{
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line);
+  border-radius:14px;
+  padding:14px 16px;
+  transition:border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.card:hover{
+  border-color:var(--grid-line-strong);
+  transform:translateY(-2px);
+  box-shadow:0 8px 22px rgba(0,0,0,0.35);
+}
+.card:has(.value.ember):hover{
+  border-color:var(--ember-dim);
+  box-shadow:0 8px 22px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,122,69,0.12) inset;
+}
+.card:has(.value.cyan):hover{
+  border-color:#2d6a63;
+  box-shadow:0 8px 22px rgba(0,0,0,0.35), 0 0 0 1px rgba(95,211,196,0.14) inset;
+}
+
+.card .label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.card .label .card-icon{
+  font-size:12px;
+  width:22px;
+  height:22px;
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:7px;
+  background:var(--bg-panel-2);
+  color:var(--cyan);
+}
+.card .label:has(+ .value.ember) .card-icon{ color:var(--ember); }
+.card .label:has(+ .value.cyan) .card-icon{ color:var(--cyan); }
+
+.card .value{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:19px;
+  font-weight:500;
+  color:var(--star);
+}
+
+.card .value.ember{color:var(--ember);}
+.card .value.cyan{color:var(--cyan);}
+
+.card.wide-card{
+  grid-column:1 / -1;
+}
+.daynight-countdown{
+  margin-top:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13.5px;
+  color:var(--muted);
+}
+
+.card .unit{
+  font-size:12px;
+  color:var(--muted);
+  margin-left:3px;
+}
+
+.update-row{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  font-size:12.5px;
+  color:var(--muted);
+}
+
+.update-row-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+#toggleBtn{
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  color:var(--star);
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line-strong);
+  padding:6px 14px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:border-color .15s ease, color .15s ease, background .15s ease, transform .1s ease;
+}
+#toggleBtn:hover{border-color:var(--cyan);}
+#toggleBtn:active{transform:scale(0.95);}
+#toggleBtn.is-paused{
+  color:var(--bg-deep);
+  background:var(--ember);
+  border-color:var(--ember);
+}
+
+.unit-toggle{
+  display:flex;
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:100px;
+  padding:2px;
+  gap:2px;
+}
+
+.unit-toggle-btn{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  padding:6px 12px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease, transform .1s ease;
+}
+.unit-toggle-btn:hover{color:var(--star);}
+.unit-toggle-btn:active{transform:scale(0.94);}
+.unit-toggle-btn.active{
+  background:var(--ember-dim);
+  color:var(--star);
+}
+
+.settings-panel .unit-toggle{margin-top:14px;}
+
+.menu-color-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:14px;
+}
+.color-swatch{
+  --sw:var(--cyan);
+  position:relative;
+  width:34px;height:34px;
+  flex:none;
+  border-radius:50%;
+  border:2px solid var(--grid-line-strong);
+  background:var(--sw);
+  cursor:pointer;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .12s ease, border-color .15s ease;
+}
+.color-swatch:hover{transform:scale(1.08);}
+.color-swatch:active{transform:scale(0.94);}
+.color-swatch:focus-visible{outline:2px solid var(--star);outline-offset:2px;}
+.color-swatch.active{border-color:var(--star);}
+.color-swatch-check{
+  font-size:12px;
+  color:#0a0f1c;
+  opacity:0;
+  transition:opacity .12s ease;
+}
+.color-swatch.active .color-swatch-check{opacity:1;}
+.color-swatch-default{
+  --sw:var(--bg-panel-2);
+  color:var(--muted);
+  font-size:13px;
+}
+.color-swatch-default.active{color:var(--star);}
+.color-swatch-custom{
+  --sw:#5fd3c4;
+  color:#fff;
+  font-size:12px;
+  overflow:hidden;
+}
+.color-swatch-custom i{
+  pointer-events:none;
+  filter:drop-shadow(0 0 2px rgba(0,0,0,.65));
+}
+.color-swatch-custom input[type="color"]{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  padding:0;
+  border:none;
+  opacity:0;
+  cursor:pointer;
+}
+.menu-color-reset-btn{
+  margin-top:12px;
+  padding:7px 14px;
+  border-radius:100px;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  cursor:pointer;
+}
+.menu-color-reset-btn:hover{color:var(--star);background:var(--bg-panel);}
+
+.source-chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px;
+}
+.source-chip{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line);
+  padding:6px 12px;
+  border-radius:100px;
+}
+
+.sat-filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+
+.sat-filter-btn{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line);
+  padding:5px 12px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:border-color .15s ease, color .15s ease, background .15s ease, transform .1s ease;
+}
+.sat-filter-btn:hover{border-color:var(--cyan);color:var(--star);}
+.sat-filter-btn:active{transform:scale(0.94);}
+.sat-filter-btn.active{
+  background:var(--ember-dim);
+  border-color:var(--ember);
+  color:var(--star);
+}
+
+button{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  color:var(--star);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  padding:8px 14px;
+  border-radius:100px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .15s ease, background .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
+  /* Skip delay ~300ms sebelum browser mobile "yakin" ini bukan double-tap-
+     to-zoom, dan matikan highlight bawaan - respons tombol jadi instan &
+     gak ada kedipan abu-abu, gerakannya (ripple, scale) kerasa lebih pas. */
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+button:hover{border-color:var(--cyan);background:#101a33;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+button:active{transform:translateY(0) scale(0.95);transition-duration:.08s;}
+button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+button:disabled{transform:none;box-shadow:none;}
+
+.ui-ripple{
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle, currentColor 0%, currentColor 45%, transparent 75%);
+  opacity:0.3;
+  transform:scale(0);
+  pointer-events:none;
+  animation:ui-ripple-anim .5s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes ui-ripple-anim{
+  to{ transform:scale(1); opacity:0; }
+}
+
+@keyframes ui-rise-in{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.ui-rise-in{
+  animation:ui-rise-in .5s cubic-bezier(.22,1,.36,1) both;
+  animation-delay:var(--entrance-delay, 0s);
+}
+.ui-reveal-pending{opacity:0; transform:translateY(10px);}
+
+.mini-locate-btn{
+  margin-top:6px;
+  font-family:'Inter',sans-serif;
+  font-size:11.5px;
+  color:var(--cyan);
+  background:transparent;
+  border:1px solid var(--grid-line-strong);
+  padding:4px 10px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:border-color .15s ease, transform .1s ease;
+}
+.mini-locate-btn:hover{border-color:var(--cyan);}
+.mini-locate-btn:active{transform:scale(0.93);}
+.mini-locate-btn:disabled{opacity:0.6;cursor:default;}
+.mini-locate-btn.hidden{display:none;}
+
+.panel-grid{
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.panel.wide{grid-column:1 / -1;}
+
+@media (max-width:720px){
+  .panel-grid{grid-template-columns:1fr;}
+}
+
+.panel{
+  background:linear-gradient(180deg,var(--bg-panel),var(--bg-panel-2) 140%);
+  border:1px solid var(--grid-line);
+  border-radius:16px;
+  padding:20px 22px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.18);
+  transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.panel:hover{
+  border-color:var(--grid-line-strong);
+  box-shadow:0 10px 26px rgba(0,0,0,0.3);
+  transform:translateY(-1px);
+}
+
+.panel h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:17px;
+  font-weight:600;
+  margin:0 0 4px;
+  display:flex;
+  align-items:center;
+}
+
+.panel-note{
+  font-size:12.5px;
+  color:var(--muted);
+  margin:0 0 14px;
+  line-height:1.5;
+}
+
+.placeholder{
+  font-size:13px;
+  color:var(--muted);
+  margin:0;
+}
+
+.error-note{
+  font-size:13px;
+  color:var(--danger);
+  margin:0;
+}
+
+.history-body{
+  position:relative;
+}
+.history-chart-wrap{
+  position:relative;
+  height:220px;
+  width:100%;
+}
+
+.weather-row{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.weather-temp{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:34px;
+  font-weight:600;
+  color:var(--ember);
+  line-height:1;
+}
+.weather-detail{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.weather-detail b{color:var(--star);font-weight:500;}
+
+.crew-count{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:34px;
+  font-weight:600;
+  color:var(--cyan);
+  line-height:1;
+  margin-bottom:10px;
+}
+.crew-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.crew-list li{
+  font-size:13.5px;
+  display:flex;
+  justify-content:space-between;
+  border-top:1px solid var(--grid-line);
+  padding-top:6px;
+}
+.crew-list li:first-child{border-top:none;padding-top:0;}
+.crew-list .craft{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;}
+
+.activity-body{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.activity-card{
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.015);
+}
+.activity-card-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+}
+.activity-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;height:26px;
+  border-radius:8px;
+  background:var(--bg-panel-2);
+  color:var(--cyan);
+  font-size:12px;
+  flex-shrink:0;
+}
+.activity-card-title-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex:1;
+  min-width:0;
+}
+.activity-card-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:13.5px;
+}
+.activity-state{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.03em;
+  padding:3px 8px;
+  border-radius:100px;
+  white-space:nowrap;
+  border:1px solid transparent;
+}
+.activity-state-live{
+  color:var(--ember);
+  background:rgba(255,122,69,0.12);
+  border-color:rgba(255,122,69,0.35);
+  animation:activity-live-pulse 2s infinite;
+}
+@keyframes activity-live-pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:0.55;}
+}
+.activity-state-upcoming{
+  color:var(--cyan);
+  background:rgba(95,211,196,0.10);
+  border-color:rgba(95,211,196,0.3);
+}
+.activity-state-done{
+  color:var(--muted);
+  background:rgba(255,255,255,0.04);
+  border-color:var(--grid-line-strong);
+}
+.activity-card-name{
+  margin:0 0 8px;
+  font-size:12.5px;
+  color:var(--muted);
+}
+.activity-card-rows{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.activity-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12.5px;
+  border-top:1px solid var(--grid-line);
+  padding-top:4px;
+}
+.activity-row:first-child{border-top:none;padding-top:0;}
+.activity-row span{color:var(--muted);}
+.activity-row b{font-weight:500;text-align:right;}
+
+@media (prefers-reduced-motion: reduce){
+  .activity-state-live{animation:none;}
+}
+
+.docking-body{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.docking-count{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:34px;
+  font-weight:600;
+  color:var(--cyan);
+  line-height:1;
+  margin-bottom:2px;
+}
+.docking-count-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.docking-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+  gap:10px;
+}
+.docking-card{
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.015);
+}
+.docking-card-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+}
+.docking-flag{
+  width:20px;height:15px;
+  border-radius:2px;
+  object-fit:cover;
+  flex-shrink:0;
+}
+.docking-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:13.5px;
+  flex:1;
+  min-width:0;
+}
+.docking-type{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.03em;
+  padding:3px 8px;
+  border-radius:100px;
+  white-space:nowrap;
+  border:1px solid transparent;
+}
+.docking-type-crew{
+  color:var(--ember);
+  background:rgba(255,122,69,0.12);
+  border-color:rgba(255,122,69,0.35);
+}
+.docking-type-cargo{
+  color:var(--cyan);
+  background:rgba(95,211,196,0.10);
+  border-color:rgba(95,211,196,0.3);
+}
+.docking-port{
+  font-size:12.5px;
+  color:var(--star);
+  margin:0 0 8px;
+}
+.docking-port b{font-weight:500;}
+.docking-rows{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.docking-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12.5px;
+  border-top:1px solid var(--grid-line);
+  padding-top:4px;
+}
+.docking-row:first-child{border-top:none;padding-top:0;}
+.docking-row span{color:var(--muted);}
+.docking-row b{font-weight:500;text-align:right;}
+.docking-crew-names{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:6px;
+  line-height:1.5;
+}
+
+.crew-timeline-body{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.crew-timeline-clock{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+}
+.crew-timeline-clock-value{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:26px;
+  font-weight:600;
+  color:var(--cyan);
+  line-height:1;
+}
+.crew-timeline-clock-label{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:0.05em;
+}
+.crew-timeline-track{
+  position:relative;
+  display:flex;
+  width:100%;
+  height:34px;
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid var(--grid-line);
+}
+.crew-timeline-seg{
+  height:100%;
+}
+.crew-timeline-now{
+  position:absolute;
+  top:-4px;
+  bottom:-4px;
+  width:2px;
+  background:var(--star);
+  box-shadow:0 0 8px 1px rgba(255,255,255,0.6);
+  z-index:2;
+}
+.crew-timeline-scale{
+  display:flex;
+  justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  color:var(--muted);
+}
+.crew-timeline-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:2px;
+}
+.crew-timeline-legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+.crew-timeline-legend-dot{
+  width:10px;height:10px;
+  border-radius:3px;
+  flex-shrink:0;
+}
+
+.apod-row{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:18px;
+}
+@media (max-width:640px){
+  .apod-row{grid-template-columns:1fr;}
+}
+.apod-row img{
+  width:100%;
+  border-radius:10px;
+  display:block;
+  border:1px solid var(--grid-line);
+}
+.apod-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15.5px;
+  font-weight:600;
+  margin:0 0 6px;
+}
+.apod-date{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+.apod-text{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+  margin:0;
+}
+
+.locate-btn{
+  font-family:'Inter',sans-serif;
+  font-size:13.5px;
+  color:var(--bg-deep);
+  background:var(--cyan);
+  border:none;
+  padding:10px 18px;
+  border-radius:100px;
+  cursor:pointer;
+  font-weight:500;
+  margin-bottom:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:filter .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1);
+}
+.locate-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.locate-btn:active{transform:translateY(0) scale(0.96);}
+.locate-btn:disabled{opacity:0.6;cursor:default;}
+
+.panel-title-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  margin-right:9px;
+  border-radius:8px;
+  background:var(--bg-panel-2);
+  color:var(--cyan);
+  font-size:13px;
+  vertical-align:middle;
+}
+.panel-ar .ar-activate-btn{
+  background:linear-gradient(135deg, var(--cyan), var(--ember));
+  color:var(--bg-deep);
+  font-weight:600;
+}
+.panel-ar{
+  border-color:var(--grid-line-strong);
+  background:linear-gradient(180deg, rgba(95,211,196,0.05), var(--bg-panel) 60%);
+}
+
+.pass-coords{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+.pass-coords b{color:var(--star);}
+
+.pass-progress{
+  font-size:13px;
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+}
+
+.pass-list{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.pass-row{
+  padding:12px 14px;
+  border-top:1px solid var(--grid-line);
+}
+.pass-row:first-child{border-top:none;}
+.pass-row.featured{
+  background:var(--bg-panel-2);
+  border:1px solid var(--ember-dim);
+  border-radius:12px;
+  margin-bottom:6px;
+}
+.pass-date{
+  font-size:13.5px;
+  font-weight:500;
+  margin-bottom:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pass-row.featured .pass-date{color:var(--ember);}
+.pass-time{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--star);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pass-detail{
+  display:inline;
+  color:var(--muted);
+  font-size:0.92em;
+}
+.pass-countdown{
+  margin-top:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--cyan);
+}
+
+.hidden{display:none !important;}
+
+.pass-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.pass-action-btn{
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  color:var(--star);
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line-strong);
+  padding:6px 12px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:border-color .15s ease, transform .1s ease;
+}
+.pass-action-btn:hover{border-color:var(--cyan);}
+.pass-action-btn:active{transform:scale(0.95);}
+.pass-action-btn.active{
+  color:var(--bg-deep);
+  background:var(--cyan);
+  border-color:var(--cyan);
+}
+.pass-action-note{
+  margin:8px 0 0;
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.pass-alarm-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+.pass-alarm-row input{accent-color:var(--cyan);}
+
+.notify-settings-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 12px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--grid-line);
+}
+.notify-settings-row label{
+  font-size:12px;
+  color:var(--muted);
+  overflow-wrap:break-word;
+}
+.notify-settings-row select{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--star);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:8px;
+  padding:5px 8px;
+}
+
+.transit-status{
+  margin-top:6px;
+  font-size:11.5px;
+  color:var(--muted);
+}
+.transit-status-likely{
+  color:var(--ember);
+  font-weight:500;
+}
+
+.livepanel{margin-top:20px;}
+.livepanel .panel-note{margin-bottom:16px;}
+.live-grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:16px;
+}
+@media (max-width:720px){
+  .live-grid{grid-template-columns:1fr;}
+}
+.live-video-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  border:1px solid var(--grid-line);
+}
+.live-video-wrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+.live-badge{
+  position:absolute;
+  top:10px;left:10px;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(5,7,15,0.72);
+  border:1px solid rgba(255,107,107,0.5);
+  color:var(--danger);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.04em;
+  padding:4px 10px;
+  border-radius:100px;
+  pointer-events:none;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--danger);
+  box-shadow:0 0 0 0 rgba(255,107,107,.6);
+  animation:pulse-red 1.6s infinite;
+}
+@keyframes pulse-red{
+  0%{box-shadow:0 0 0 0 rgba(255,107,107,.6);}
+  70%{box-shadow:0 0 0 7px rgba(255,107,107,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,107,107,0);}
+}
+.live-telemetry{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.groundtrack-wrap{
+  width:100%;
+  aspect-ratio:2/1;
+  border-radius:10px;
+  overflow:hidden;
+  background:#000000;
+  border:1px solid var(--grid-line);
+}
+#groundTrackCanvas{width:100%;height:100%;display:block;}
+.live-stats{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--star);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 12px;
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line);
+  border-radius:10px;
+  padding:10px 12px;
+}
+.live-stats .live-over-row{grid-column:1 / -1;}
+.live-stats span.k{
+  display:block;
+  color:var(--muted);
+  font-family:'Inter',sans-serif;
+  font-size:11px;
+  margin-bottom:2px;
+}
+.live-updated{
+  margin:0;
+  font-size:11.5px;
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+}
+
+.sat-list{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  max-height:340px;
+  overflow-y:auto;
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+  background:var(--bg-panel-2);
+}
+.sat-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-top:1px solid var(--grid-line);
+}
+.sat-row:first-child{border-top:none;}
+.sat-row.sat-primary{background:rgba(255,122,69,0.06);}
+
+.compare-charts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+@media (max-width:640px){
+  .compare-charts{grid-template-columns:1fr;}
+}
+.compare-chart-card{
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+  padding:12px 14px;
+}
+.compare-chart-title{
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--muted);
+  margin:0 0 8px;
+}
+.compare-chart-wrap{
+  position:relative;
+  height:200px;
+  width:100%;
+}
+.sat-dot{
+  width:9px;height:9px;border-radius:50%;
+  flex-shrink:0;
+}
+.sat-flag{font-size:14px;flex-shrink:0;line-height:1;}
+.sat-name{
+  font-weight:600;
+  font-size:13.5px;
+  flex:1;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sat-badge{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;
+  font-weight:600;
+  color:var(--ember);
+  border:1px solid var(--ember-dim);
+  border-radius:5px;
+  padding:1px 5px;
+  flex-shrink:0;
+}
+.sat-alt{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--muted);
+  white-space:nowrap;
+  flex-shrink:0;
+  min-width:64px;
+  text-align:right;
+}
+.sat-alt b{color:var(--star);font-weight:500;}
+.sat-toggle{
+  flex-shrink:0;
+  width:15px;height:15px;
+  accent-color:var(--cyan);
+  cursor:pointer;
+}
+.sat-error{
+  font-size:12px;
+  color:var(--danger);
+  padding:2px 0 0;
+}
+.sat-remove-btn{
+  flex-shrink:0;
+  width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel);
+  color:var(--muted);
+  border-radius:50%;
+  font-size:10px;
+  cursor:pointer;
+  padding:0;
+}
+.sat-remove-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+.sat-add-box{
+  margin-bottom:16px;
+  padding:12px 14px;
+  border:1px dashed var(--grid-line-strong);
+  border-radius:12px;
+  background:var(--bg-panel-2);
+}
+.sat-add-label{
+  margin:0 0 10px;
+  font-size:12.5px;
+  color:var(--muted);
+}
+.sat-add-row{
+  display:flex;
+  gap:8px;
+}
+.sat-add-input{
+  flex:1;
+  min-width:0;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  color:var(--star);
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line-strong);
+  border-radius:100px;
+  padding:8px 14px;
+}
+.sat-add-input:focus{outline:none;border-color:var(--cyan);}
+.sat-add-submit{white-space:nowrap;flex-shrink:0;}
+.sat-add-results{margin-top:10px;}
+.sat-add-results .placeholder,
+.sat-add-results .error-note{margin:0;font-size:12.5px;}
+.sat-add-result-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 4px;
+  border-top:1px solid var(--grid-line);
+}
+.sat-add-result-row:first-child{border-top:none;}
+.sat-add-result-name{
+  font-weight:600;
+  font-size:13px;
+  flex:1;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sat-add-result-meta{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  flex-shrink:0;
+}
+.sat-add-take-btn{
+  font-family:'Inter',sans-serif;
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--bg-deep);
+  background:var(--cyan);
+  border:none;
+  border-radius:100px;
+  padding:5px 12px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.sat-add-take-btn:hover{filter:brightness(1.08);}
+.sat-add-take-btn:disabled{opacity:0.7;cursor:default;}
+.sat-add-result-row.is-added .sat-add-take-btn{
+  background:var(--bg-panel);
+  color:var(--muted);
+  border:1px solid var(--grid-line-strong);
+}
+
+.playback-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+.locate-btn.small{
+  padding:7px 14px;
+  font-size:12.5px;
+  margin-bottom:0;
+}
+#playbackSlider{
+  flex:1;
+  min-width:140px;
+  accent-color:var(--cyan);
+}
+#playbackSpeed{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--star);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:8px;
+  padding:4px 6px;
+}
+.playback-time{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--cyan);
+  white-space:nowrap;
+}
+
+.crew-list li{
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:2px;
+}
+.crew-list .crew-row-top{
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+}
+.crew-list .crew-sub{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11.5px;
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+}
+.crew-list .crew-flag{
+  width:16px;height:12px;
+  border-radius:2px;
+  object-fit:cover;
+}
+
+footer{
+  margin-top:26px;
+  padding-top:22px;
+  border-top:1px solid var(--grid-line);
+  font-size:12px;
+  line-height:1.7;
+  color:var(--muted);
+  text-align:center;
+}
+a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s ease;}
+a:hover{border-bottom-color:currentColor;}
+
+.ar-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#000;
+  overflow:hidden;
+  /* Tanpa ini, geser 1 jari di atas overlay AR bisa ke-tangkap browser
+     sebagai gesture bawaan (pull-to-refresh / rubber-band scroll / native
+     pinch-zoom halaman) - kerasa banget "buggy" di Chrome/Safari HP karena
+     halaman ikut ketarik/reload padahal lagi di mode kamera. Pinch-zoom di
+     AR sudah ditangani manual lewat JS, jadi aman dimatikan di sini. */
+  touch-action:none;
+  overscroll-behavior:contain;
+}
+.ar-overlay.hidden{display:none;}
+.ar-overlay #arVideo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  /* Kamera beneran - jangan digelapin/dikasih tint aneh, biar user ngerasa
+     lagi liat lewat kamera HP-nya, bukan lagi liat efek "ruang angkasa"
+     yang bikin gambar keliatan gelap/hitam. */
+  filter:none;
+}
+
+.ar-sky-color{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgb(3,5,13) 0%, rgb(6,9,20) 100%);
+  /* Warna sebenarnya di-set lewat JS (updateSkyColor) berdasarkan elevasi
+     matahari asli - transition di sini cuma buat mudarin transisi antar
+     update (tiap SUN_RECALC_MS) biar gak "kepotong" pas berubah. */
+  transition:background 4s linear, opacity .3s ease;
+  /* Cuma dipakai di mode texture (langit tanpa kamera). Di mode kamera
+     harus transparan - kalau enggak, layer gelap ini nutupin feed kamera
+     asli dan bikin kesannya kamera gak beneran kebuka / gelap terus. */
+  opacity:0;
+}
+.ar-overlay.ar-mode-texture .ar-sky-color{ opacity:1; }
+
+.ar-space-scrim{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(6,10,24,0) 0%, rgba(4,6,16,0.55) 78%, rgba(2,3,10,0.82) 100%),
+    linear-gradient(180deg, rgba(6,14,28,0.35) 0%, rgba(3,6,16,0.1) 30%, rgba(2,4,12,0.5) 100%);
+  transition:opacity .3s ease;
+  /* Sama kayak .ar-sky-color: vinyet ruang-angkasa ini cuma buat mode
+     texture, jangan nggelapin video kamera beneran. */
+  opacity:0;
+}
+.ar-overlay.ar-mode-texture .ar-space-scrim{ opacity:1; }
+
+/* Efek gelap/vinyet buat MODE KAMERA (bukan mode texture) - beda dari
+   .ar-space-scrim di atas. Kamera HP di luar ruangan/siang bolong sering
+   kelewat terang, jadi panah/label/marker jadi susah kebaca karena
+   kontrasnya tenggelam sama langit terang di baliknya. Vinyet tipis ini
+   nggelapin dikit di pinggiran (bukan nutup seluruh gambar - user tetap
+   liat kamera aslinya), cukup buat naikin kontras teks/ikon di atasnya. */
+.ar-camera-dim{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.22) 70%, rgba(0,0,0,0.48) 100%),
+    linear-gradient(180deg, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 68%, rgba(0,0,0,0.32) 100%);
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.ar-overlay.ar-mode-camera .ar-camera-dim{ opacity:1; }
+
+/* "Tanah"/horizon buat mode tampilan tekstur (tanpa kamera) - biar berasa
+   lagi berdiri di luar kayak ground/landscape bawaan Stellarium, bukan cuma
+   ngambang di latar item polos. top diatur lewat JS tiap frame sesuai tilt
+   HP, height dibuat gede biar tetap nutupin sampai bawah layar walau digeser. */
+.ar-ground-rotate{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  pointer-events:none;
+  will-change:transform;
+}
+.ar-ground{
+  /* Lebar & tinggi sengaja dibuat JAUH lebih gede dari layar (300vmax; vmax
+     di HP manapun udah pasti > diagonal layar) dan dipusatkan horizontal
+     (left:50% + margin-left:-150vmax) - supaya waktu #ar-ground-rotate
+     muter panel ini ngikutin roll, sisi/sudut panelnya gak PERNAH kelihatan
+     nongol masuk ke area layar dari arah manapun (sisi kiri/kanan/bawahnya
+     selalu jauh di luar frame). Kalau ukurannya cuma sebesar layar (kayak
+     sebelumnya, left:0;right:0), pas diputar sudut jauh dari pivot bakal
+     kesapu jauh ke samping & kelihatan "sobek" kayak di bug laporan user -
+     itu sebabnya kemarin ground jadi aneh pas di-tilt. Posisi vertikalnya
+     (garis horizon) tetap diatur lewat `top` dari JS seperti biasa.
+  */
+  position:absolute;
+  left:50%;
+  width:300vmax;
+  margin-left:-150vmax;
+  height:300vmax;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgba(4,9,8,0) 0%, rgba(4,10,9,0.88) 6%, rgba(2,6,7,0.97) 40%, #030706 100%);
+  transition:none;
+}
+.ar-ground.hidden{display:none;}
+
+/* ===== Latar panorama custom (opsional) - dipilih lewat tombol galeri
+   gambar di toolbar, cuma muncul & aktif di mode 'texture' (gyro). Default
+   nonaktif (activePanoId null) & langit tetap prosedural kayak biasa. */
+.ar-pano-rotate{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  will-change:transform;
+}
+.ar-pano-bg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-repeat:repeat-x no-repeat;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.ar-pano-bg.hidden{ display:none; }
+.ar-overlay.ar-mode-texture.ar-pano-active .ar-pano-bg{ opacity:1; }
+/* Pas foto panorama custom aktif, langit prosedural (gradient warna,
+   bintang, siluet ground) disembunyikan biar gak numpuk sama foto asli -
+   marker ISS/planet & kompas tetap tampil normal di atasnya. */
+.ar-overlay.ar-pano-active .ar-sky-color,
+.ar-overlay.ar-pano-active .ar-ground-rotate,
+.ar-overlay.ar-pano-active .ar-space-scrim{
+  opacity:0;
+}
+/* #arStarMap (bintang asli + garis rasi + glow-nya) SENGAJA tetap tampil di
+   atas foto panorama - sama kayak di atas video kamera beneran di mode
+   'camera', biar rasi bintang + label tetap nongol kek Stellarium walau
+   latarnya udah diganti foto sendiri. */
+
+.ar-pano-btn.hidden{ display:none; }
+
+.ar-pano-backdrop{
+  position:fixed; inset:0;
+  z-index:29;
+  background:rgba(2,4,10,0.6);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  animation:ar-pano-fade-in .18s ease both;
+}
+.ar-pano-backdrop.hidden{ display:none; }
+@keyframes ar-pano-fade-in{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes ar-pano-pop-in{
+  from{ opacity:0; transform:translate(-50%,-50%) scale(0.94); }
+  to{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+.ar-pano-panel{
+  position:fixed;
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(320px, calc(100vw - 48px));
+  z-index:30;
+  background:rgba(8,12,20,0.94);
+  border:1px solid var(--grid-line-strong, rgba(255,255,255,0.1));
+  border-radius:18px;
+  padding:16px 16px 14px 16px;
+  box-shadow:0 16px 44px rgba(0,0,0,0.5);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  animation:ar-pano-pop-in .2s cubic-bezier(.22,1,.36,1) both;
+}
+.ar-pano-panel.hidden{ display:none; }
+.ar-pano-tray{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:4px 2px 6px 2px;
+  scrollbar-width:none;
+  justify-content:flex-start;
+}
+.ar-pano-tray::-webkit-scrollbar{ display:none; }
+.ar-pano-thumb{
+  flex:0 0 auto;
+  width:64px; height:64px;
+  border-radius:12px;
+  border:1.5px solid transparent;
+  background-size:cover;
+  background-position:center;
+  background-color:rgba(255,255,255,0.06);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  filter:brightness(0.78) saturate(0.95);
+  transition:border-color .15s ease, filter .15s ease, transform .15s ease;
+  padding:0;
+}
+.ar-pano-thumb.active{
+  border-color:var(--ember, #6fe3a4);
+  filter:brightness(1) saturate(1.05);
+  transform:translateY(-2px);
+}
+.ar-pano-thumb span{
+  position:absolute; left:0; right:0; bottom:0;
+  font-size:9px; text-align:center; padding:2px 0;
+  background:rgba(0,0,0,0.5);
+}
+.ar-pano-thumb-off{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; font-size:16px;
+}
+.ar-pano-thumb-off span{ position:static; background:none; font-size:9px; }
+.ar-pano-thumb-add{
+  display:flex; align-items:center; justify-content:center;
+  border:1.5px dashed rgba(255,255,255,0.25);
+  font-size:20px;
+}
+
+.ar-ground::before{
+  content:'';
+  position:absolute;
+  top:-1px; left:0; right:0;
+  height:58px;
+  background-repeat:repeat-x;
+  background-size:var(--ar-ground-tile-w, 340px) 58px;
+  background-position:var(--ar-ground-offset-x, 0px) bottom;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='340' height='58' viewBox='0 0 340 58'><path fill='%23030706' d='M0 58 L0 36 Q18 26 34 34 T64 30 L70 8 L76 30 Q92 24 108 32 T146 27 Q166 18 184 30 T222 25 L228 4 L234 25 Q252 20 268 30 T300 27 Q318 20 340 30 L340 58 Z'/></svg>");
+  transform:translateY(2px);
+}
+.ar-crosshair{
+  position:absolute;
+  top:50%;left:50%;
+  width:22px;height:22px;
+  transform:translate(-50%,-50%);
+  border:2px solid rgba(255,255,255,0.55);
+  border-radius:50%;
+  pointer-events:none;
+}
+.ar-crosshair::before,.ar-crosshair::after{
+  content:'';
+  position:absolute;
+  background:rgba(255,255,255,0.55);
+}
+.ar-crosshair::before{ top:50%;left:-6px;right:-6px;height:1px;transform:translateY(-50%); }
+.ar-crosshair::after{ left:50%;top:-6px;bottom:-6px;width:1px;transform:translateX(-50%); }
+
+.ar-marker{
+  position:absolute;
+  left:0; top:0;
+  --mx:0px; --my:0px;
+  /* translate3d(--mx,--my) digerakkan tiap frame lewat JS (bukan left/top)
+     supaya cuma perlu compositing, bukan reflow layout - ini yang bikin
+     marker gerak mulus di HP, gak patah-patah. Elemen ini CUMA ngurus
+     posisi - kemiringan (roll) ditangani elemen anak .ar-marker-tilt di
+     bawah, sengaja dipisah biar transform-origin gak numpuk/kacau. */
+  transform:translate3d(var(--mx),var(--my),0) translate(-50%,-50%);
+  pointer-events:none;
+  transition:transform 0.08s linear;
+  will-change:transform;
+}
+.ar-marker.hidden{display:none;}
+.ar-marker-tilt{
+  --mrot:0deg;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  /* Muter ikon+label ngikutin kemiringan HP (deviceRoll), kek label di
+     Stellarium yang ikut "rebah" pas layar di-tilt - bukan cuma posisinya
+     yang geser doang. Transform-origin defaultnya (titik tengah elemen
+     INI SENDIRI) udah pas persis nangkring di titik (mx,my) yang diatur
+     elemen induk .ar-marker, jadi muternya udah otomatis pas di sekitar
+     titik itu tanpa perlu itung-itung origin manual lagi. */
+  transform:rotate(var(--mrot));
+  transition:transform 0.08s linear;
+}
+
+/* Marker tetap tampil walau posisinya di bawah horizon (transparan, kayak
+   "ground" tembus pandang di Stellarium) - bedanya cuma opacity, posisi &
+   proyeksi tetap sama persis kayak marker normal. */
+.ar-marker.ar-marker-below-horizon{
+  opacity:0.45;
+  filter:grayscale(0.55);
+}
+.ar-marker.ar-marker-below-horizon .ar-marker-dot,
+.ar-marker.ar-marker-below-horizon .ar-marker-dot-other{
+  animation:none;
+}
+.ar-marker.ar-marker-below-horizon .ar-marker-dot::after{
+  display:none;
+}
+.ar-marker.ar-marker-below-horizon .ar-marker-label,
+.ar-marker.ar-marker-below-horizon .ar-marker-label-other{
+  border:1px dashed rgba(255,255,255,0.4);
+}
+
+.ar-marker-offset::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:calc(-1 * var(--ar-leader-h, 0px));
+  width:1px;
+  height:var(--ar-leader-h, 0px);
+  background:rgba(255,255,255,0.4);
+  transform:translateX(-50%);
+}
+.ar-marker-offset::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:calc(-1 * var(--ar-leader-h, 0px));
+  width:4px;height:4px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.7);
+  transform:translate(-50%,-50%);
+}
+
+.ar-marker-dot{
+  position:relative;
+  font-size:34px;
+  filter:drop-shadow(0 0 10px rgba(255,122,69,0.85));
+  animation:ar-pulse 1.6s ease-in-out infinite;
+}
+.ar-marker-dot::after{
+  /* Cincin "radar ping" pelan di belakang ikon ISS - bikin marker gampang
+     ke-notice mata tanpa harus lebih besar/mencolok. Pure transform+opacity
+     jadi ringan, gak ganggu performa. */
+  content:'';
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,122,69,0.55);
+  animation:ar-ping 1.6s cubic-bezier(.2,.7,.3,1) infinite;
+  pointer-events:none;
+}
+@keyframes ar-ping{
+  0%{ transform:scale(0.7); opacity:0.7; }
+  100%{ transform:scale(1.7); opacity:0; }
+}
+@keyframes ar-pulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.12);}
+}
+.ar-marker-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  color:var(--ember);
+  background:rgba(5,7,15,0.65);
+  padding:2px 6px;
+  border-radius:6px;
+}
+
+/* Satu-satunya panah arah di mode AR - dulu ISS, tiap satelit lain, dan
+   tiap planet/Bulan punya panahnya sendiri2 (numpuk & muter kayak bulatan
+   di tengah layar kalau lagi banyak yang di luar frame bareng). Sekarang
+   cuma elemen ini yang dipakai, gantian nunjuk ke objek yang lagi "aktif"
+   dicari (lihat activeTargetKind/activeTargetKey & setSingleEdgeArrow di
+   ar.js) - ikon panahnya yang dirotasi, bukan seluruh kotak, biar label
+   namanya tetap tegak dibaca dari sudut manapun.*/
+.ar-edge-arrow{
+  position:absolute;
+  top:50%;left:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  color:var(--ember);
+  pointer-events:none;
+}
+.ar-edge-arrow-icon{
+  display:block;
+  font-size:clamp(28px, 8vw, 38px);
+  color:inherit;
+  text-shadow:0 0 10px rgba(255,122,69,0.85);
+  transition:transform .08s linear;
+}
+.ar-edge-arrow-name{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  color:inherit;
+  background:rgba(5,7,15,0.72);
+  padding:2px 9px;
+  border-radius:8px;
+  white-space:nowrap;
+  max-width:50vw;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ar-edge-arrow-name:empty{ display:none; }
+.ar-edge-arrow.hidden{display:none;}
+
+.ar-edge-arrow.ar-edge-arrow-below-horizon{
+  opacity:0.5;
+  filter:grayscale(0.5);
+}
+
+.ar-info-badge{
+  position:absolute;
+  left:16px;
+  top:calc(18px + env(safe-area-inset-top,0px));
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  pointer-events:none;
+  z-index:3;
+}
+.ar-info-badge-item{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--star);
+  background:rgba(5,7,15,0.65);
+  padding:4px 10px;
+  border-radius:14px;
+  white-space:nowrap;
+  width:fit-content;
+}
+.ar-info-badge-item i{ color:var(--ember); font-size:11px; }
+
+.ar-readout{
+  position:absolute;
+  left:50%;
+  bottom:150px;
+  transform:translateX(-50%);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--star);
+  background:rgba(5,7,15,0.65);
+  padding:6px 14px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+.ar-note{
+  position:absolute;
+  left:16px;right:16px;
+  bottom:82px;
+  margin:0;
+  text-align:center;
+  font-size:12.5px;
+  color:var(--muted);
+}
+
+.ar-calibration-hint{
+  position:absolute;
+  left:16px;right:16px;
+  top:60px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  background:rgba(5,7,15,0.82);
+  border:1px solid rgba(255,196,110,0.5);
+  border-radius:14px;
+  padding:7px 8px 7px 10px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.35);
+  animation:ar-calibration-shake 1.6s ease-in-out infinite;
+}
+.ar-calibration-hint.hidden{ display:none; }
+.ar-calibration-hint span{
+  flex:1;
+  font-size:11.5px;
+  line-height:1.3;
+  color:var(--star);
+}
+.ar-calibration-figure8{
+  width:42px; height:24px;
+  flex:none;
+}
+.ar-calibration-figure8 path{
+  fill:none;
+  stroke:var(--ember);
+  stroke-width:2.5;
+  stroke-linecap:round;
+  opacity:0.55;
+}
+.ar-calibration-dot{
+  fill:var(--ember);
+  offset-path: path('M15,17 C15,8 25,8 30,17 C35,26 45,26 45,17 C45,8 35,8 30,17 C25,26 15,26 15,17 Z');
+  animation:ar-calibration-dot-move 1.8s linear infinite;
+}
+@keyframes ar-calibration-dot-move{
+  0%{ offset-distance:0%; }
+  100%{ offset-distance:100%; }
+}
+@keyframes ar-calibration-shake{
+  0%,100%{ transform:rotate(0deg); }
+  25%{ transform:rotate(-1deg); }
+  75%{ transform:rotate(1deg); }
+}
+.ar-calibration-hint-close{
+  flex:none;
+  width:22px;height:22px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.12);
+  color:var(--star);
+  font-size:11px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.ar-icon-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(5,7,15,0.65);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:var(--star);
+  box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  transition:background .15s ease, border-color .15s ease, transform .18s cubic-bezier(.34,1.56,.64,1), color .15s ease, box-shadow .15s ease;
+  flex:none;
+}
+.ar-icon-btn:hover{
+  background:rgba(10,14,26,0.8);
+  border-color:rgba(255,255,255,0.22);
+}
+.ar-icon-btn:active{ transform:scale(0.88); transition-duration:.08s; }
+.ar-icon-btn.ar-calib-btn-active{ transform:scale(1.06); }
+
+.ar-close-btn{
+  position:absolute;
+  top:18px;right:18px;
+  width:38px;height:38px;
+  border-radius:50%;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.ar-opening{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(20,32,58,0.9) 0%, rgba(3,5,12,0.98) 65%, #000 100%);
+  text-align:center;
+  padding:24px;
+  opacity:1;
+  visibility:visible;
+  transition:opacity .5s ease, visibility .5s ease;
+  cursor:pointer;
+}
+.ar-opening.ar-opening-hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.ar-opening-logo{
+  width:132px;
+  max-width:46vw;
+  filter:drop-shadow(0 0 18px rgba(95,211,196,0.45));
+  animation:ar-opening-pulse 2.2s ease-in-out infinite;
+}
+@keyframes ar-opening-pulse{
+  0%,100%{ transform:scale(1); opacity:0.96; }
+  50%{ transform:scale(1.045); opacity:1; }
+}
+.ar-opening-orbit{
+  position:relative;
+  width:64px;height:64px;
+}
+.ar-opening-orbit::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1px dashed rgba(95,211,196,0.35);
+}
+.ar-opening-orbit-dot{
+  position:absolute;
+  top:50%;left:50%;
+  width:64px;height:64px;
+  margin:-32px 0 0 -32px;
+  animation:ar-opening-spin 1.8s linear infinite;
+}
+.ar-opening-orbit-dot::after{
+  content:'';
+  position:absolute;
+  top:0;left:50%;
+  width:7px;height:7px;
+  margin-left:-3.5px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 10px 2px rgba(95,211,196,0.7);
+}
+@keyframes ar-opening-spin{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+.ar-opening-title{
+  margin:0;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:22px;
+  letter-spacing:0.02em;
+  color:var(--star);
+}
+.ar-opening-subtitle{
+  margin:0;
+  max-width:280px;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.ar-toolbar{
+  position:absolute;
+  left:50%;
+  bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  /* Grup jadi satu flexbox - kalau salah satu tombol disembunyikan (mis.
+     bulan/planet gak tersedia), tombol lain otomatis rapat/center lagi,
+     gak ninggalin lubang kosong kayak posisi manual per-piksel sebelumnya. */
+  max-width:calc(100vw - 24px);
+  /* Jaring pengaman buat HP yang sangat sempit (<320px) atau kalau makin
+     banyak tombol ditambah ke toolbar ke depannya - dari pada
+     kepotong/numpuk di luar layar, baris ini jadi bisa digeser horizontal.
+     Di layar normal gak akan pernah kepakai karena tombolnya emang muat. */
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  padding:2px 0;
+}
+.ar-toolbar::-webkit-scrollbar{ display:none; }
+.ar-voice-btn,.ar-sky-btn,.ar-stars-btn,.ar-calib-btn,.ar-search-btn,.ar-freelook-btn,.ar-mode-btn{
+  position:static;
+  flex:none;
+  width:38px;height:38px;
+  border-radius:50%;
+  font-size:16px;
+  cursor:pointer;
+}
+
+@media (max-width:380px){
+  .ar-toolbar{ gap:7px; }
+  .ar-voice-btn,.ar-sky-btn,.ar-stars-btn,.ar-calib-btn,.ar-search-btn,.ar-freelook-btn,.ar-mode-btn{
+    width:34px; height:34px; font-size:14px;
+  }
+}
+
+
+.ar-other-markers{ position:absolute; inset:0; pointer-events:none; }
+.ar-marker-other{ opacity:0.92; }
+.ar-marker-dot-other{
+  font-size:24px;
+  animation:none;
+  filter:none;
+}
+.ar-marker-dot-other::after{ display:none; } /* ring ping cuma buat ISS biar tetap jadi fokus utama */
+.ar-marker-label-other{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  background:rgba(5,7,15,0.65);
+  padding:1px 5px;
+  border-radius:6px;
+  white-space:nowrap;
+}
+.ar-marker-phase{
+  margin-top:2px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  font-weight:500;
+  text-align:center;
+  opacity:0.85;
+  white-space:nowrap;
+}
+.ar-marker-phase:empty{ display:none; }
+.ar-marker-other.hidden{display:none;}
+
+.ar-activate-btn{
+  margin-top:10px;
+}
+
+.ar-fab-btn{
+  position:fixed;
+  left:calc(18px + env(safe-area-inset-left,0px));
+  bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  z-index:40;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:11px 20px;
+  border:1px solid var(--grid-line-strong);
+  border-radius:100px;
+  background:rgba(9,13,26,0.94);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.45);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.ar-fab-btn:hover{ border-color:var(--ember); color:var(--ember); }
+.ar-fab-btn:disabled{ opacity:0.6; cursor:default; }
+.ar-fab-btn.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(8px);
+}
+.ar-fab-icon{
+  font-size:16px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateX(1px);
+}
+.ar-fab-text{ white-space:nowrap; }
+
+@media (max-width:640px){
+  .ar-fab-btn{ bottom:calc(18px + env(safe-area-inset-bottom,0px)); padding:12px; border-radius:50%; }
+  .ar-fab-text{ display:none; }
+  .ar-fab-icon{ font-size:17px; transform:translateX(1px) translateY(0.5px); }
+}
+
+.ar-sky-markers{ position:absolute; inset:0; pointer-events:none; }
+.ar-marker-sky{ opacity:0.96; }
+
+.ar-marker-photo{
+  width:30px; height:30px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 0 10px rgba(255,255,255,0.25);
+}
+.ar-sky-btn.hidden{ display:none; }
+.ar-sky-credit{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:64px;
+  margin:0;
+  font-size:9.5px;
+  line-height:1.35;
+  color:rgba(255,255,255,0.4);
+}
+.ar-sky-credit.hidden{ display:none; }
+
+.ar-sky-status{
+  position:absolute;
+  left:16px;
+  right:16px;
+  /* Dipindah ke atas (di bawah badge lokasi/jam) - sebelumnya di bawah
+     (deket toolbar/kompas/readout) gampang ketutupan atau nabrak elemen
+     lain di situ yang udah rame. */
+  top:calc(64px + env(safe-area-inset-top,0px));
+  margin:0 auto;
+  width:fit-content;
+  max-width:calc(100% - 32px);
+  text-align:center;
+  font-size:11px;
+  line-height:1.35;
+  color:var(--muted);
+  /* Latar tipis biar tetep kebaca pas nimpa video kamera asli yang terang
+     (di atas gak ada vinyet gelap lagi kayak sebelumnya, beda sama area
+     bawah yang masih agak teduh karena deket toolbar). */
+  background:rgba(5,7,15,0.6);
+  padding:4px 12px;
+  border-radius:12px;
+}
+.ar-sky-status.hidden{ display:none; }
+
+.ar-tap-hint{
+  position:absolute;
+  top:58px;
+  left:64px;
+  right:64px;
+  transform:translateY(-50%);
+  margin:0;
+  text-align:center;
+  font-size:10.5px;
+  line-height:1.3;
+  color:rgba(255,255,255,0.45);
+  pointer-events:none;
+}
+.ar-tap-hint.hidden{ display:none; }
+
+.ar-zoom-hint{
+  position:absolute;
+  top:37px;
+  left:64px;
+  right:64px;
+  transform:translateY(-50%);
+  margin:0;
+  text-align:center;
+  font-size:10.5px;
+  line-height:1.3;
+  color:rgba(255,255,255,0.55);
+  pointer-events:none;
+}
+.ar-zoom-hint.hidden{ display:none; }
+
+.ar-marker-tappable{
+  pointer-events:auto;
+  cursor:pointer;
+  padding:8px;
+  margin:-8px;
+}
+.ar-marker-tappable .ar-marker-photo{
+  transition:transform 0.15s ease;
+}
+.ar-marker-tappable:active .ar-marker-photo{
+  transform:scale(0.92);
+}
+@keyframes ar-info-card-in{
+  from{ opacity:0; transform:translateY(calc(-50% + 10px)) scale(0.96); }
+  to{ opacity:1; transform:translateY(-50%) scale(1); }
+}
+.ar-info-card{
+  position:absolute;
+  left:16px;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  max-width:320px;
+  margin:0 auto;
+  background:linear-gradient(180deg,rgba(11,17,34,0.94),rgba(14,21,40,0.94));
+  border:1px solid var(--grid-line-strong);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  pointer-events:auto;
+  animation:ar-info-card-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+.ar-info-card.hidden{ display:none; }
+.ar-info-close{
+  position:absolute;
+  top:10px; right:10px;
+  width:28px; height:28px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.08);
+  color:var(--star);
+  font-size:13px;
+  cursor:pointer;
+}
+.ar-info-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+  padding-right:26px;
+}
+.ar-info-photo{
+  width:52px; height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 0 12px rgba(255,255,255,0.2);
+  flex-shrink:0;
+}
+.ar-info-title{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:17px;
+  font-weight:600;
+}
+.ar-info-rows{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.ar-info-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:10px;
+  font-size:12.5px;
+  color:var(--muted);
+  border-bottom:1px solid var(--grid-line);
+  padding-bottom:6px;
+}
+.ar-info-row:last-child{ border-bottom:none; padding-bottom:0; }
+.ar-info-row b{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--star);
+  text-align:right;
+  white-space:nowrap;
+}
+.ar-info-note{
+  margin:10px 0 0;
+  font-size:10.5px;
+  line-height:1.4;
+  color:rgba(255,255,255,0.4);
+}
+
+.ar-starmap-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:hidden;
+  pointer-events:none;
+}
+/* Catatan: gaya bintang/garis-rasi/trail/horizon dulu di sini sebagai kelas
+   CSS buat elemen SVG (.ar-star-dot dkk) - sekarang starmap-nya dirender di
+   <canvas> (lihat ar.js renderSkyOverlaySvg) buat performa, jadi warna/
+   ketebalan garisnya di-set langsung lewat context 2D di JS, bukan CSS lagi. */
+
+
+.ar-stars-btn.hidden{ display:none; }
+
+
+.ar-calib-btn-active{
+  box-shadow:0 0 0 2px var(--ember);
+  color:var(--ember);
+  border-color:var(--ember);
+}
+@keyframes ar-panel-in{
+  from{ opacity:0; transform:translateX(-50%) translateY(10px) scale(0.97); }
+  to{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+}
+.ar-calib-panel{
+  position:absolute;
+  bottom:calc(66px + env(safe-area-inset-bottom,0px));
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 36px);
+  max-width:280px;
+  background:rgba(5,7,15,0.9);
+  border:1px solid var(--grid-line-strong);
+  border-radius:14px;
+  padding:12px 12px 10px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.45);
+  animation:ar-panel-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+.ar-calib-panel.hidden{ display:none; }
+.ar-calib-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+}
+.ar-calib-head span{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  font-weight:600;
+  color:var(--star);
+}
+.ar-calib-close{
+  flex:none;
+  width:22px;height:22px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.12);
+  color:var(--star);
+  font-size:11px;
+  line-height:1;
+  cursor:pointer;
+}
+.ar-calib-desc{
+  margin:0 0 10px;
+  font-size:11px;
+  line-height:1.4;
+  color:var(--muted);
+}
+.ar-calib-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+.ar-calib-row span:first-child{
+  font-size:11.5px;
+  color:var(--star);
+}
+.ar-calib-stepper{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:none;
+}
+.ar-calib-step{
+  width:26px; height:26px;
+  border-radius:50%;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--star);
+  font-size:15px;
+  line-height:1;
+  cursor:pointer;
+}
+.ar-calib-step:hover{ background:var(--bg-panel); }
+.ar-calib-value{
+  min-width:44px;
+  text-align:center;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--ember);
+}
+.ar-calib-toggle-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.ar-calib-toggle-row input{
+  width:16px; height:16px;
+  accent-color:var(--ember);
+  flex:none;
+  cursor:pointer;
+}
+.ar-calib-toggle-row span{
+  font-size:11.5px;
+  color:var(--star);
+  line-height:1.3;
+}
+.ar-calib-reset{
+  width:100%;
+  padding:7px;
+  border-radius:8px;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  cursor:pointer;
+}
+.ar-calib-reset:hover{ color:var(--star); background:var(--bg-panel); }
+
+.ar-calib-auto-btn{
+  width:100%;
+  margin-top:8px;
+  padding:9px;
+  border-radius:8px;
+  border:1px solid var(--ember);
+  background:rgba(255,255,255,0.04);
+  color:var(--ember);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.ar-calib-auto-btn:hover{ background:rgba(255,255,255,0.08); }
+
+.ar-autocalib-panel{
+  position:absolute;
+  bottom:calc(66px + env(safe-area-inset-bottom,0px));
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 36px);
+  max-width:320px;
+  max-height:60vh;
+  overflow-y:auto;
+  background:rgba(5,7,15,0.94);
+  border:1px solid var(--grid-line-strong);
+  border-radius:14px;
+  padding:12px 12px 14px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.45);
+  z-index:40;
+  animation:ar-panel-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+.ar-autocalib-panel.hidden{ display:none; }
+.ar-autocalib-desc{
+  margin:0 0 10px;
+  font-size:12px;
+  line-height:1.45;
+  color:var(--muted);
+}
+.ar-autocalib-desc b{ color:var(--star); }
+.ar-autocalib-desc.ar-autocalib-success{ color:var(--ember); font-weight:600; }
+.ar-autocalib-desc.ar-autocalib-error{ color:#ff6b6b; }
+.ar-autocalib-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.ar-autocalib-target-btn{
+  padding:8px 12px;
+  border-radius:20px;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  cursor:pointer;
+}
+.ar-autocalib-target-btn:hover{ background:var(--bg-panel); border-color:var(--ember); }
+
+.ar-autocalib-taplayer{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  cursor:crosshair;
+  background:rgba(0,0,0,0.01); /* nyaris transparan, cuma buat nangkep tap */
+}
+.ar-autocalib-taplayer.hidden{ display:none; }
+
+/* --- Modal cari planet/objek langit ------------------------------------- */
+/* --ar-search-vh / --ar-search-voffset disuntik dari JS (visualViewport)
+   selama modal ini kebuka - dipakai biar panelnya gak ketutup keyboard
+   virtual di HP (lihat applySearchViewportInset di ar.js). Fallback ke
+   100dvh/0px kalau browser gak dukung visualViewport (tetap aman). */
+.ar-search-modal{
+  position:absolute;
+  inset:0;
+  top:var(--ar-search-voffset, 0px);
+  height:var(--ar-search-vh, 100dvh);
+  z-index:60;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  background:rgba(3,5,12,0.55);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
+  box-sizing:border-box;
+}
+.ar-search-modal.hidden{ display:none; }
+.ar-search-panel{
+  width:100%;
+  max-width:420px;
+  max-height:min(72vh, calc(var(--ar-search-vh, 100dvh) - 20px));
+  display:flex;
+  flex-direction:column;
+  background:rgba(5,7,15,0.96);
+  border:1px solid var(--grid-line-strong);
+  border-radius:16px;
+  padding:14px 14px 10px;
+  box-shadow:0 -8px 30px rgba(0,0,0,0.5);
+  animation:ar-panel-in .22s cubic-bezier(.22,1,.36,1) both;
+  box-sizing:border-box;
+}
+
+/* Layar sempit banget (HP kecil / dilipat) - kurangi padding luar biar
+   panel dapet ruang selebar mungkin, dan naikkan max-height dikit karena
+   toolbar/header di layar segini juga lebih pendek. */
+@media (max-width:360px){
+  .ar-search-modal{ padding-left:6px; padding-right:6px; }
+  .ar-search-panel{ padding:12px 12px 8px; border-radius:14px; }
+  .ar-search-title{ font-size:12px; }
+}
+
+/* Orientasi landscape (HP dimiringkan) - tinggi layar jauh lebih pendek
+   dari lebarnya, jadi panel dibuat lebih pendek & lebih lebar, dan align
+   ke tengah (bukan nempel bawah) biar gak kepotong sama toolbar/keyboard. */
+@media (orientation:landscape) and (max-height:480px){
+  .ar-search-modal{ align-items:center; }
+  .ar-search-panel{
+    max-width:min(560px, 92vw);
+    max-height:min(88vh, calc(var(--ar-search-vh, 100dvh) - 16px));
+  }
+}
+
+/* Layar lebar (tablet/desktop testing) - jangan biarin panel jadi kekecilan
+   di tengah layar segede itu. */
+@media (min-width:820px){
+  .ar-search-panel{ max-width:460px; }
+}
+
+.ar-search-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
+.ar-search-title{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  font-weight:600;
+  color:var(--star);
+}
+.ar-search-input-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border-radius:10px;
+  border:1px solid var(--grid-line-strong);
+  background:rgba(255,255,255,0.05);
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.ar-search-input-wrap:focus-within{
+  border-color:var(--ember);
+  color:var(--ember);
+}
+.ar-search-input{
+  flex:1;
+  min-width:0;
+  border:none;
+  background:transparent;
+  outline:none;
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  /* 16px, bukan 13.5px seperti sebelumnya - di bawah 16px, Safari iOS
+     otomatis nge-zoom in seluruh halaman begitu input ini difokus, yang
+     bikin modal ini kerasa "rusak"/salah posisi begitu keyboard muncul. */
+  font-size:16px;
+}
+.ar-search-input::placeholder{ color:var(--muted); }
+.ar-search-list{
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding-bottom:4px;
+}
+.ar-search-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  border-radius:12px;
+  padding:9px 10px;
+  cursor:pointer;
+  text-align:left;
+  transition:background .15s ease, border-color .15s ease;
+}
+.ar-search-item:hover,.ar-search-item:active{
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.2);
+}
+.ar-search-item-dot{
+  flex:none;
+  width:10px;height:10px;
+  border-radius:50%;
+  box-shadow:0 0 6px 1px currentColor;
+}
+.ar-search-item-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.ar-search-item-name{
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--star);
+}
+.ar-search-item-meta{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ar-search-item-go{
+  flex:none;
+  font-size:12px;
+  color:var(--muted);
+}
+.ar-search-empty{
+  margin:6px 2px 4px;
+  font-size:12.5px;
+  color:var(--muted);
+  text-align:center;
+}
+.ar-search-empty.hidden{ display:none; }
+
+.ar-search-toast{
+  z-index:35;
+}
+
+/* Efek "berkedip" sebentar di marker/panah pas dipilih dari hasil search,
+   biar gampang ketemu di antara marker lain yang lagi tampil bareng. */
+@keyframes ar-search-pulse{
+  0%{ filter:drop-shadow(0 0 0 rgba(255,122,69,0)); transform-origin:center; }
+  25%{ filter:drop-shadow(0 0 14px rgba(255,122,69,0.95)); transform:scale(1.18); }
+  50%{ filter:drop-shadow(0 0 4px rgba(255,122,69,0.4)); transform:scale(1); }
+  75%{ filter:drop-shadow(0 0 14px rgba(255,122,69,0.95)); transform:scale(1.18); }
+  100%{ filter:drop-shadow(0 0 0 rgba(255,122,69,0)); transform:scale(1); }
+}
+.ar-search-highlight{
+  animation:ar-search-pulse 1.3s ease-in-out 0s 2;
+}
+
+.ar-compass-tape{
+  position:absolute;
+  left:0; right:0;
+  bottom:110px;
+  height:34px;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ar-compass-tick{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:rgba(255,255,255,0.3);
+  transform:translateX(-50%);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+.ar-compass-tick.ar-compass-major{ background:rgba(255,255,255,0.75); width:2px; }
+.ar-compass-tick.ar-compass-inter{ background:rgba(255,255,255,0.5); }
+.ar-compass-tick span{
+  position:absolute;
+  top:6px;
+  transform:translateX(-50%);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  color:var(--star);
+  background:rgba(5,7,15,0.55);
+  padding:1px 5px;
+  border-radius:5px;
+  white-space:nowrap;
+}
+
+.iss-window{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  padding-top:6px;
+}
+.iss-window-frame{
+  width:168px;
+  height:168px;
+  border-radius:50%;
+  padding:10px;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.14), rgba(255,255,255,0) 45%),
+    linear-gradient(155deg, #3a4260, #12172a 60%, #05070f);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.06) inset,
+    0 10px 30px rgba(0,0,0,0.5);
+}
+.iss-window-sky{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  overflow:hidden;
+  position:relative;
+  transition:background 0.8s ease;
+  background:linear-gradient(180deg,#0b1330,#05070f);
+}
+.iss-window-sky.is-day{
+  background:linear-gradient(180deg,#bfe3ff 0%,#6fb6e8 35%,#2f6fb0 65%,#123a63 100%);
+}
+.iss-window-sky.is-night{
+  background:radial-gradient(circle at 70% 20%, rgba(255,255,255,0.08), rgba(0,0,0,0) 40%),
+             linear-gradient(180deg,#05060d 0%,#0a0f22 60%,#141b33 100%);
+  box-shadow:inset 0 0 30px rgba(95,211,196,0.06);
+}
+.iss-window-curve{
+  position:absolute;
+  left:-20%;
+  right:-20%;
+  bottom:-52%;
+  height:90%;
+  border-radius:50%;
+  background:linear-gradient(180deg, rgba(95,211,196,0.25), rgba(11,17,34,0.95) 70%);
+}
+.iss-window-sky.is-day .iss-window-curve{
+  background:linear-gradient(180deg, rgba(184,222,255,0.35), rgba(20,70,45,0.9) 55%, rgba(10,40,25,0.95) 100%);
+}
+.iss-window-sky.is-night .iss-window-curve{
+  background:linear-gradient(180deg, rgba(95,211,196,0.12), rgba(6,9,20,0.97) 70%);
+}
+.iss-window-caption{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  text-align:center;
+}
+.iss-window-state{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--cyan);
+}
+.iss-window-below{
+  font-size:14px;
+  color:var(--star);
+  font-weight:600;
+}
+
+.stat-compare{
+  margin-top:4px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+}
+
+.map-toolbar{
+  position:absolute;
+  top:28px; right:28px;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:6px;
+  background:rgba(11,17,34,0.72);
+  border:1px solid var(--grid-line);
+  border-radius:14px;
+  backdrop-filter:blur(6px);
+}
+.map-tool-sep{
+  height:1px;
+  margin:2px 4px;
+  background:var(--grid-line);
+}
+.map-tool-btn{
+  width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+  line-height:1;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:9px;
+  color:var(--star);
+  cursor:pointer;
+  padding:0;
+  transition:background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.map-tool-btn:hover{background:var(--bg-panel-2); border-color:var(--grid-line); transform:translateY(-1px);}
+.map-tool-btn:active{transform:translateY(0) scale(0.92);}
+.map-tool-btn.active{
+  background:var(--ember-dim);
+  border-color:var(--ember);
+}
+
+.map-panel{
+  position:absolute;
+  top:28px; right:72px;
+  transform-origin:top right;
+  z-index:6;
+  width:260px;
+  max-height:min(360px, calc(100% - 56px));
+  display:flex;
+  flex-direction:column;
+  background:rgba(11,17,34,0.94);
+  border:1px solid var(--grid-line);
+  border-radius:14px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 12px 28px rgba(0,0,0,0.35);
+  opacity:1;
+  transform:translateY(0) scale(1);
+  transition:opacity .18s ease, transform .18s cubic-bezier(.22,1,.36,1);
+}
+
+.map-panel.hidden{
+  display:flex;
+  opacity:0;
+  transform:translateY(-8px) scale(0.97);
+  pointer-events:none;
+}
+
+.map-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+  border-bottom:1px solid var(--grid-line);
+  flex-shrink:0;
+}
+.map-panel-head h3{
+  margin:0;
+  font-size:13px;
+  font-weight:600;
+  color:var(--star);
+}
+.map-panel-close{
+  width:22px; height:22px;
+  display:flex; align-items:center; justify-content:center;
+  padding:0;
+  font-size:12px;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+}
+.map-panel-close:hover{color:var(--star); background:var(--bg-panel-2);}
+
+.map-panel-body{
+  padding:12px 14px 14px;
+  overflow-y:auto;
+}
+.map-panel-body .sat-filter-bar{margin-bottom:8px;}
+.map-panel-body .sat-list{max-height:180px;}
+.map-panel-body .sat-name{font-size:12.5px;}
+
+.map-toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:7px 0;
+  font-size:12.5px;
+  color:var(--star);
+  cursor:pointer;
+}
+.map-toggle-row input[type="checkbox"]{
+  width:15px; height:15px;
+  accent-color:var(--cyan);
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.map-slider-row{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:9px 0 4px;
+  font-size:12.5px;
+  color:var(--star);
+}
+.map-slider-row input[type="range"]{
+  width:100%;
+  accent-color:var(--cyan);
+}
+
+.sat-info-popup{
+  position:absolute;
+  left:20px; bottom:20px;
+  z-index:6;
+  width:220px;
+  max-width:calc(100% - 40px);
+  display:flex;
+  flex-direction:column;
+  background:rgba(11,17,34,0.94);
+  border:1px solid var(--grid-line);
+  border-radius:14px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 12px 28px rgba(0,0,0,0.35);
+  transform-origin:bottom left;
+  opacity:1;
+  transform:translateY(0) scale(1);
+  transition:opacity .18s ease, transform .18s cubic-bezier(.22,1,.36,1);
+}
+
+.sat-info-popup.hidden{
+  display:flex;
+  opacity:0;
+  transform:translateY(8px) scale(0.97);
+  pointer-events:none;
+}
+.sat-info-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 6px 10px 12px;
+  border-bottom:1px solid var(--grid-line);
+}
+.sat-info-dot{
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--ember);
+  flex-shrink:0;
+  box-shadow:0 0 6px 1px currentColor;
+}
+.sat-info-name{
+  flex:1;
+  min-width:0;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:12.5px;
+  color:var(--star);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sat-info-live{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.03em;
+  color:var(--ember);
+  border:1px solid var(--ember-dim);
+  border-radius:100px;
+  padding:2px 6px;
+  flex-shrink:0;
+}
+.sat-info-body{
+  padding:10px 12px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.sat-info-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:10px;
+  font-size:12px;
+  color:var(--muted);
+}
+.sat-info-row span:last-child{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--star);
+  text-align:right;
+  white-space:nowrap;
+}
+
+.sat-info-photo-wrap{
+  width:100%;
+  height:110px;
+  overflow:hidden;
+  background:var(--bg-panel-2);
+  border-bottom:1px solid var(--grid-line);
+}
+.sat-info-photo-wrap.hidden{ display:none; }
+.sat-info-photo-wrap.loading{ animation:sat-photo-pulse 1.4s ease-in-out infinite; }
+.sat-info-photo{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+@keyframes sat-photo-pulse{
+  0%,100%{ opacity:0.45; }
+  50%{ opacity:0.8; }
+}
+.sat-info-more{
+  margin-top:2px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
+  padding:8px 10px;
+  border-radius:100px;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+.sat-info-more:disabled{ opacity:0.5; cursor:default; }
+.sat-info-more i{ font-size:10px; color:var(--muted); }
+
+.sat-detail-modal-backdrop{
+  position:fixed; inset:0; z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:rgba(0,0,0,0.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.sat-detail-modal-backdrop.hidden{ display:none; }
+.sat-detail-modal{
+  width:100%; max-width:380px;
+  max-height:92vh;
+  display:flex; flex-direction:column;
+  background:rgba(11,17,34,0.97);
+  border:1px solid var(--grid-line-strong);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+.sat-detail-modal-body{
+  flex:1; min-height:0; overflow:auto;
+  display:flex; flex-direction:column;
+}
+.sat-detail-photo-wrap{
+  width:100%; height:170px;
+  flex-shrink:0;
+  background:var(--bg-panel-2);
+  overflow:hidden;
+}
+.sat-detail-photo-wrap.hidden{ display:none; }
+.sat-detail-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+.sat-detail-stats{
+  display:flex; flex-direction:column; gap:6px;
+  padding:14px 16px 0;
+}
+.sat-detail-extract{
+  margin:12px 16px 0;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--muted);
+}
+.sat-detail-source{
+  margin:8px 16px 14px;
+  font-size:10.5px;
+  color:var(--muted);
+  opacity:0.7;
+}
+.sat-detail-source.hidden{ display:none; }
+
+@media (max-width:640px){
+  .sat-info-popup{
+    left:14px; right:14px; bottom:14px;
+    width:auto; max-width:none;
+  }
+}
+
+@media (max-width:640px){
+  .map-toolbar{
+    top:14px; right:14px;
+    flex-direction:row;
+    flex-wrap:wrap;
+    max-width:calc(100% - 28px);
+    justify-content:flex-end;
+  }
+  .map-tool-sep{
+    width:1px; height:auto;
+    margin:2px;
+  }
+  .map-panel{
+    top:auto; bottom:14px;
+    left:14px; right:14px;
+    width:auto;
+    max-height:min(300px, calc(100% - 28px));
+  }
+}
+
+.share-card-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:14px auto 0;
+  padding:11px 20px;
+  border:1px solid var(--grid-line-strong);
+  border-radius:100px;
+  background:linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+  color:var(--star);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:border-color .2s ease, color .2s ease, transform .2s ease;
+}
+.share-card-btn:hover{ border-color:var(--ember); color:var(--ember); }
+.share-card-btn:active{ transform:scale(0.97); }
+.share-card-btn:disabled{ opacity:0.55; cursor:default; transform:none; }
+
+.share-modal-backdrop{
+  position:fixed; inset:0; z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:rgba(0,0,0,0.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.share-modal-backdrop.hidden{ display:none; }
+.share-modal{
+  width:100%; max-width:380px;
+  max-height:92vh;
+  display:flex; flex-direction:column;
+  background:rgba(11,17,34,0.97);
+  border:1px solid var(--grid-line-strong);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+.share-modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:1px solid var(--grid-line);
+  flex-shrink:0;
+}
+.share-modal-head h3{ margin:0; font-size:14px; font-weight:600; color:var(--star); font-family:'Space Grotesk',sans-serif; }
+.share-modal-body{
+  flex:1; min-height:0; overflow:auto;
+  padding:14px 16px;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+}
+.share-modal-img{
+  width:100%; max-width:280px;
+  border-radius:12px;
+  border:1px solid var(--grid-line);
+  display:block;
+}
+.share-modal-note{
+  font-size:12px; color:var(--muted); text-align:center; margin:0;
+}
+.share-modal-note.hidden{ display:none; }
+.share-modal-actions{
+  display:flex; gap:10px;
+  padding:14px 16px;
+  border-top:1px solid var(--grid-line);
+  flex-shrink:0;
+}
+.share-modal-btn{
+  flex:1;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 14px;
+  border-radius:100px;
+  border:1px solid var(--grid-line-strong);
+  background:var(--bg-panel-2);
+  color:var(--star);
+  font-family:'Inter',sans-serif;
+  font-size:13px; font-weight:600;
+  cursor:pointer;
+}
+.share-modal-btn.primary{
+  background:var(--ember);
+  border-color:var(--ember);
+  color:#1a0e08;
+}
+.share-modal-btn:disabled{ opacity:0.55; cursor:default; }
+
+.tle-select-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+.tle-select-row label{
+  font-size:12.5px;
+  color:var(--muted);
+}
+.tle-select{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--star);
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:pointer;
+}
+.tle-select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+
+.tle-meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 22px;
+  margin-bottom:14px;
+}
+.tle-meta-item{
+  font-size:12px;
+}
+.tle-meta-item .k{
+  display:block;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.tle-meta-item .v{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--star);
+  font-size:13px;
+}
+.tle-meta-item .v.stale{color:var(--danger);}
+
+.tle-raw-block{
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-bottom:14px;
+  overflow-x:auto;
+}
+.tle-raw-line{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--star);
+  white-space:pre;
+  line-height:1.7;
+}
+.tle-raw-name{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--cyan);
+  margin-bottom:4px;
+}
+
+.tle-orbital-heading{
+  margin:0 0 10px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--star);
+  font-family:'Space Grotesk',sans-serif;
+}
+.tle-orbital-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:12px 18px;
+  margin-bottom:16px;
+}
+.tle-orbital-item .k{
+  display:block;
+  font-size:11.5px;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.tle-orbital-item .v{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:14px;
+  color:var(--star);
+}
+
+.tle-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px; height:1px;
+  padding:0; margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.skip-link{
+  position:absolute;
+  top:-100px;
+  left:12px;
+  z-index:1000;
+  background:var(--cyan);
+  color:var(--bg-deep);
+  padding:10px 18px;
+  border-radius:8px;
+  font-family:'Inter',sans-serif;
+  font-size:13.5px;
+  font-weight:600;
+  text-decoration:none;
+  transition:top 0.15s ease;
+}
+.skip-link:focus{
+  top:12px;
+}
+
+.a11y-read-row{
+  margin-top:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+#a11yReadBtn.speaking{
+  color:var(--bg-deep);
+  background:var(--cyan);
+  border-color:var(--cyan);
+}
+
+/* ===== MECHANICAL - Doppler shift page ===== */
+.mech-loc-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--cyan);
+}
+.mech-manual-loc{margin-top:14px;}
+.mech-manual-form{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:8px;
+}
+.mech-manual-form input[type="number"]{
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  padding:8px 12px;
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  width:140px;
+}
+.mech-manual-submit{padding:8px 16px;}
+
+.mech-custom-freq{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+}
+.mech-custom-freq label{
+  font-size:12.5px;
+  color:var(--muted);
+}
+.mech-custom-freq input[type="number"]{
+  background:var(--bg-panel-2);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  padding:7px 12px;
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  width:120px;
+}
+
+.mech-status-badge{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+}
+#mechStatus.is-visible .dot,
+.mech-status-badge.is-visible{color:var(--cyan);}
+.mech-status-badge.is-hidden{color:var(--muted);}
+.mech-status-badge.is-error{color:var(--ember);}
+
+.mech-dir{
+  margin-top:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+}
+.mech-dir.approaching{color:var(--cyan);}
+.mech-dir.receding{color:var(--ember);}
+
+#mechReadoutGrid.mech-dim{opacity:0.45;}
+
+.mech-chart-wrap{
+  position:relative;
+  height:180px;
+  margin-top:10px;
+}
+
+/* ===== ISFR-ARVI page ===== */
+.arvi-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);
+  gap:16px;
+}
+@media (max-width:900px){
+  .arvi-layout{grid-template-columns:1fr;}
+}
+.arvi-map-wrap{
+  position:relative;
+  height:520px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--grid-line);
+  margin-top:12px;
+}
+#arviMap{
+  height:100%;
+  width:100%;
+  background:var(--bg-panel);
+}
+.arvi-map-legend{
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  z-index:1000;
+  background:rgba(11,17,34,0.88);
+  border:1px solid var(--grid-line);
+  border-radius:10px;
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.7;
+  backdrop-filter:blur(4px);
+  max-width:min(220px, calc(100% - 20px));
+  /* Never grow past the map itself, and never grow tall enough to reach
+     the Leaflet attribution strip pinned to the bottom of the map - that
+     collision was the main reason the expanded legend looked broken on
+     phone screens. */
+  max-height:min(280px, calc(100% - 96px));
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+/* Collapsed (default) state is just this one-line pill; tapping it
+   reveals the full key. Keeps the corner compact until someone actually
+   wants the details. */
+.arvi-legend-toggle{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  width:100%;
+  background:none;
+  border:none;
+  color:var(--star);
+  font-weight:600;
+  font-size:11px;
+  padding:7px 10px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.arvi-legend-toggle:hover{color:var(--cyan);}
+.arvi-legend-badge{
+  color:#ff8a6a;
+  font-weight:600;
+}
+.arvi-legend-chevron{
+  margin-left:auto;
+  font-size:9px;
+  opacity:.75;
+  transition:transform .18s ease;
+}
+.arvi-map-legend.open .arvi-legend-chevron{transform:rotate(180deg);}
+.arvi-legend-body{
+  display:none;
+  padding:0 12px 10px;
+  overflow-y:auto;
+}
+.arvi-map-legend.open .arvi-legend-body{display:block;}
+.arvi-map-legend .dot{
+  display:inline-block;
+  width:9px;height:9px;
+  border-radius:50%;
+  margin-right:6px;
+}
+/* Fire hotspot density legend (low/medium/high/critical), stacked below
+   the two main legend lines inside the same corner box. */
+.arvi-density-legend{
+  margin-top:6px;
+  padding-top:6px;
+  border-top:1px solid var(--grid-line);
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.arvi-density-title{
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  opacity:.7;
+  margin-bottom:2px;
+}
+.arvi-critical-count{
+  opacity:.75;
+  font-size:10.5px;
+  margin-left:2px;
+}
+/* Volcano (PVMBG) status legend, same stacked-block style as the fire
+   density legend above it. */
+.arvi-volcano-legend{
+  margin-top:6px;
+  padding-top:6px;
+  border-top:1px solid var(--grid-line);
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.arvi-volcano-legend .arvi-density-title{margin-bottom:2px;}
+.arvi-volcano-marker{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+}
+.arvi-volcano-counts{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+.arvi-volcano-count-pill{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11.5px;
+  font-weight:700;
+  color:#0b1122;
+}
+.arvi-volcano-level-tag{
+  display:inline-block;
+  margin-left:8px;
+  padding:1px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:700;
+  color:#0b1122;
+  vertical-align:middle;
+}
+@media (max-width:520px){
+  .arvi-map-legend{
+    max-width:min(180px, calc(100% - 16px));
+    max-height:min(220px, calc(100% - 84px));
+    font-size:10.5px;
+  }
+  .arvi-legend-toggle{font-size:10px; padding:6px 8px;}
+}
+/* Pulsing outline on "zona kritis" cluster circles drawn on the map, so a
+   dense hotspot cluster reads as urgent at a glance rather than blending
+   in with the ordinary low/medium/high density circles. */
+.arvi-critical-pulse{
+  animation:arviCriticalPulse 1.6s ease-out infinite;
+}
+@keyframes arviCriticalPulse{
+  0%{stroke-opacity:1; fill-opacity:.4;}
+  70%{stroke-opacity:.35; fill-opacity:.15;}
+  100%{stroke-opacity:1; fill-opacity:.4;}
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-critical-pulse{animation:none;}
+}
+/* Purple ring around a cluster of quakes in the same spot within a short
+   window - a possible mainshock/aftershock sequence, distinct from the
+   fire density colors above. */
+.arvi-sequence-pulse{
+  animation:arviSequencePulse 2s ease-out infinite;
+}
+@keyframes arviSequencePulse{
+  0%{stroke-opacity:1; fill-opacity:.18;}
+  70%{stroke-opacity:.3; fill-opacity:.05;}
+  100%{stroke-opacity:1; fill-opacity:.18;}
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-sequence-pulse{animation:none;}
+}
+/* Auto-surfaced emergency/evacuation banner - only shown when the radius
+   filter is on and something (quake/fire) is actually nearby. Distinct
+   ember-toned border so it reads as urgent, separate from the neutral
+   dark legend boxes. */
+.arvi-emergency-banner{
+  position:absolute;
+  /* Sits BELOW the filter/stats toggle buttons (they occupy top:10px,
+     38px tall -> bottom edge ~58px) instead of at top:10px like before.
+     At top:10px this 340px-wide centered banner physically overlapped
+     both corner buttons on every phone-width screen, making them
+     untappable while a banner was showing - that was the main "ketutupan"
+     (covered by other UI) complaint. */
+  top:58px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:1050;
+  width:min(320px, calc(100% - 116px));
+  background:rgba(24,12,10,0.94);
+  border:1px solid var(--ember);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:12px;
+  color:var(--star);
+  backdrop-filter:blur(4px);
+  box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+.arvi-emergency-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.arvi-emergency-head i{color:var(--ember); margin-right:4px;}
+.arvi-emergency-close{
+  background:none; border:none; color:var(--muted); cursor:pointer;
+  font-size:13px; padding:2px 4px; line-height:1;
+}
+.arvi-emergency-close:hover{color:var(--star);}
+.arvi-emergency-summary{margin:0 0 8px; color:var(--muted); line-height:1.4;}
+.arvi-emergency-contacts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px 8px;
+  margin-bottom:8px;
+}
+.arvi-emergency-contacts a{
+  color:var(--star);
+  text-decoration:none;
+  font-size:11.5px;
+  padding:3px 6px;
+  border-radius:6px;
+  background:rgba(255,255,255,0.06);
+}
+.arvi-emergency-contacts a:hover{background:rgba(255,255,255,0.12);}
+.arvi-emergency-contacts a b{color:var(--ember); margin-right:3px;}
+.arvi-emergency-note{margin:0; color:var(--muted); font-size:11px; line-height:1.4;}
+.arvi-emergency-note a{color:var(--star);}
+@media (max-width:520px){
+  .arvi-emergency-banner{top:58px; width:calc(100% - 116px);}
+}
+/* AQI stat card body */
+.arvi-aqi-badge{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:12.5px;
+  color:#0b1122;
+  margin-bottom:6px;
+}
+.arvi-aqi-detail{margin:0 0 2px; color:var(--star);}
+.arvi-aqi-source{margin:0; color:var(--muted); font-size:11.5px;}
+.arvi-stats-panel{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.arvi-stat-card{
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line);
+  border-radius:14px;
+  padding:16px;
+  transition:border-color .18s ease, box-shadow .18s ease;
+}
+.arvi-stat-card:hover{
+  border-color:var(--grid-line-strong, var(--cyan));
+  box-shadow:0 4px 18px rgba(0,0,0,0.22);
+}
+.arvi-stat-card h3{
+  font-size:13px;
+  font-weight:600;
+  color:var(--star);
+  margin:0 0 4px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.arvi-stat-card .arvi-stat-note{
+  font-size:11.5px;
+  color:var(--muted);
+  margin:0 0 12px;
+  line-height:1.5;
+}
+.arvi-region-row{
+  margin-bottom:12px;
+}
+.arvi-region-row:last-child{margin-bottom:0;}
+.arvi-region-row .arvi-region-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  font-size:12.5px;
+  margin-bottom:5px;
+}
+.arvi-region-row .arvi-region-name{color:var(--star);font-weight:500;}
+.arvi-region-row .arvi-region-pct{color:var(--cyan);font-family:'IBM Plex Mono',monospace;}
+.arvi-bar-track{
+  height:8px;
+  border-radius:5px;
+  background:var(--grid-line);
+  overflow:hidden;
+  display:flex;
+}
+.arvi-bar-seg{
+  height:100%;
+}
+.arvi-legend-inline{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  margin-top:12px;
+  font-size:11px;
+  color:var(--muted);
+}
+.arvi-legend-inline span{display:flex;align-items:center;gap:5px;}
+.arvi-legend-inline .dot{width:8px;height:8px;border-radius:50%;}
+.arvi-demo-tag{
+  display:inline-block;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.03em;
+  color:var(--ember);
+  border:1px solid var(--ember-dim);
+  border-radius:6px;
+  padding:1px 6px;
+  margin-left:6px;
+  vertical-align:middle;
+}
+.arvi-donut-wrap{
+  position:relative;
+  height:170px;
+  margin-bottom:6px;
+}
+/* Tren magnitudo: chart batang+garis butuh lebar penuh buat 30 titik hari,
+   jadi lebih tinggi dikit dari donut wrap di atas biar sumbu-X gak sesak. */
+.arvi-trend-wrap{
+  height:190px;
+}
+.arvi-region-select{
+  width:100%;
+  margin-bottom:10px;
+}
+/* Leaflet's own zoom control defaults to the same top-left corner as our
+   custom stats-toggle button (both sit at ~10px from the edge), so the
+   two controls used to overlap and fight for taps. Push Leaflet's own
+   top corners down below our button row instead. */
+.arvi-map-wrap .leaflet-top.leaflet-left,
+.arvi-map-wrap .leaflet-top.leaflet-right{
+  top:58px;
+}
+.leaflet-popup-content-wrapper{
+  background:var(--bg-panel-2) !important;
+  color:var(--star) !important;
+  border-radius:10px !important;
+}
+.leaflet-popup-tip{background:var(--bg-panel-2) !important;}
+.leaflet-popup-content{font-size:12.5px !important;line-height:1.6 !important;}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted) !important;}
+
+.arvi-control-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
+}
+.arvi-snow-toggle{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:var(--muted);
+  cursor:pointer;
+  user-select:none;
+}
+.arvi-snow-toggle input{
+  appearance:none;
+  -webkit-appearance:none;
+  flex-shrink:0;
+  width:17px;
+  height:17px;
+  margin:0;
+  border-radius:5px;
+  border:1.5px solid var(--grid-line-strong);
+  background:rgba(255,255,255,0.03);
+  position:relative;
+  cursor:pointer;
+  transition:background .18s ease, border-color .18s ease, transform .12s ease;
+}
+.arvi-snow-toggle input:hover{border-color:var(--cyan);}
+.arvi-snow-toggle input:active{transform:scale(0.86);}
+.arvi-snow-toggle input::after{
+  content:'';
+  position:absolute;
+  left:5px; top:1px;
+  width:4px; height:8px;
+  border:solid #08131a;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg) scale(0);
+  transform-origin:60% 40%;
+  opacity:0;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1), opacity .12s ease;
+}
+.arvi-snow-toggle input:checked{
+  background:var(--cyan);
+  border-color:var(--cyan);
+  transition:background .18s ease, border-color .18s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.arvi-snow-toggle input:checked::after{
+  transform:rotate(45deg) scale(1);
+  opacity:1;
+}
+
+.arvi-radar-transport{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+  padding:8px 12px;
+}
+.arvi-transport-btn{
+  background:transparent;
+  border:1px solid var(--grid-line);
+  color:var(--star);
+  width:32px;height:32px;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+  flex-shrink:0;
+}
+.arvi-transport-btn:hover{border-color:var(--grid-line-strong); background:var(--bg-panel-2);}
+.arvi-radar-transport input[type="range"]{
+  flex:1;
+  accent-color:var(--cyan);
+}
+.arvi-radar-time{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--muted);
+  white-space:nowrap;
+  min-width:110px;
+  text-align:right;
+}
+
+.arvi-dbz-legend{
+  margin-top:12px;
+  padding:10px 14px;
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line);
+  border-radius:12px;
+}
+.arvi-dbz-title{
+  font-size:11px;
+  color:var(--muted);
+  display:block;
+  margin-bottom:6px;
+}
+.arvi-dbz-scale{
+  display:flex;
+  height:12px;
+  border-radius:4px;
+  overflow:hidden;
+}
+.arvi-dbz-scale span{flex:1;}
+.arvi-dbz-labels{
+  display:flex;
+  justify-content:space-between;
+  font-size:10.5px;
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* ===== ISFR-ARVI neutral dark theme (scoped to this page only) =====
+   Firemap.live-style palette: flat charcoal grays instead of a tinted
+   brand color, so the data on the map (fire/quake/radar) stays the
+   visual focus. Ember is kept as amber (not red) for fire semantics. */
+body.arvi-page{
+  --nav-accent:#9fb0bf;
+  --cyan:#9fb0bf;
+  --ember:#ff9e4a;
+  --ember-dim:#4a3a22;
+  --grid-line:#2b2b2b;
+  --grid-line-strong:#3f3f3f;
+  --danger:#ff5c5c;
+}
+body.arvi-page .arvi-map-legend{background:rgba(24,24,24,0.9);}
+
+/* Real satellite photos are true-color, so "Gelap" mode just darkens/
+   desaturates it slightly for a moodier night look instead of trying to
+   fake a full dark-mode palette (there's no such thing as a "dark"
+   satellite photo). "Terang" removes the class for the plain, brighter
+   original imagery. */
+.arvi-sat-base.is-dark{
+  filter:brightness(0.85) contrast(1.2) saturate(1.35);
+}
+
+/* Live NASA GIBS fire-hotspot raster: pushes saturation/contrast up so
+   the hotspot pixels read as a deep, solid red instead of NASA's native
+   pale salmon tint - without needing high opacity to look "full". */
+.arvi-fire-live{
+  filter:saturate(2.4) contrast(1.5) brightness(0.95);
+  mix-blend-mode:multiply;
+}
+
+/* ===== ISFR-ARVI boot / opening screen ===== */
+.arvi-boot{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  background:radial-gradient(120% 120% at 50% 22%, #2a2a2a 0%, #141414 55%, #000000 100%);
+  transition:opacity .55s ease, visibility .55s ease;
+}
+.arvi-boot.is-hidden{opacity:0; visibility:hidden; pointer-events:none;}
+.arvi-boot-glow{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 42%, rgba(200,200,200,0.18), transparent 60%);
+  animation:arviBootPulse 2.4s ease-in-out infinite;
+}
+.arvi-boot-logo{
+  position:relative;
+  z-index:1;
+  width:min(64vw, 280px);
+  height:auto;
+  filter:drop-shadow(0 0 20px rgba(255,255,255,0.28));
+  animation:arviBootFloat 2.6s ease-in-out infinite;
+}
+.arvi-boot-bar{
+  position:relative;
+  z-index:1;
+  width:min(60vw, 220px);
+  height:3px;
+  background:rgba(255,255,255,0.12);
+  border-radius:4px;
+  overflow:hidden;
+}
+.arvi-boot-bar span{
+  display:block;
+  height:100%;
+  width:35%;
+  background:linear-gradient(90deg,#9fb0bf,#e9edf6);
+  border-radius:4px;
+  animation:arviBootLoad 1.5s ease-in-out infinite;
+}
+.arvi-boot-status{
+  position:relative;
+  z-index:1;
+  font-size:11.5px;
+  letter-spacing:0.03em;
+  color:#a8a8a8;
+  margin:0;
+}
+@keyframes arviBootPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+@keyframes arviBootFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes arviBootLoad{0%{transform:translateX(-100%);}100%{transform:translateX(285%);}}
+@media (prefers-reduced-motion: reduce){
+  .arvi-boot-glow, .arvi-boot-logo, .arvi-boot-bar span{animation:none;}
+}
+
+/* ===== ISFR-ARVI hamburger filter panel (on top of the map) ===== */
+.arvi-filter-toggle{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:2001;
+  width:38px;height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(28,28,28,0.92);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  transition:border-color .15s ease, background .15s ease;
+}
+.arvi-filter-toggle:hover{border-color:var(--cyan); background:var(--bg-panel-2);}
+.arvi-filter-toggle i{
+  font-size:16px;
+  color:var(--star);
+  transition:transform .35s cubic-bezier(.22,1,.36,1);
+}
+.arvi-filter-toggle:hover i{transform:rotate(35deg);}
+.arvi-filter-toggle[aria-expanded="true"] i{
+  color:var(--cyan);
+  transform:rotate(105deg);
+}
+
+/* ===== ISFR-ARVI custom zoom control (replaces Leaflet's default one) === */
+.arvi-zoom-ctrl{
+  position:absolute;
+  right:10px;
+  bottom:30px;
+  z-index:1000;
+  display:flex;
+  flex-direction:column;
+  background:rgba(28,28,28,0.92);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  overflow:hidden;
+  backdrop-filter:blur(4px);
+}
+.arvi-zoom-ctrl button{
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:none;
+  border:none;
+  color:var(--star);
+  font-size:14px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.arvi-zoom-ctrl button:first-child{border-bottom:1px solid var(--grid-line-strong);}
+.arvi-zoom-ctrl button:hover{background:var(--bg-panel-2); color:var(--cyan);}
+.arvi-zoom-ctrl button:active{transform:scale(0.92);}
+
+/* Shared dim + blur backdrop for the filter panel & stats drawer. Both
+   panels now live as position:fixed siblings at the body root (moved out
+   of .arvi-map-wrap in the HTML) instead of being absolutely positioned
+   *inside* the map card - nested there, they were clipped/out-ordered by
+   .wrap's overflow:hidden (fullmap mode) and the floating header card
+   could paint on top of them instead of the other way around. Living at
+   the root with a very high z-index guarantees they're always in front,
+   and this backdrop gives them the dimmed/blurred-background look every
+   other full-screen panel in the app (quake alarm, report modal) already
+   has. */
+.arvi-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:4990;
+  background:rgba(4,6,14,0.55);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+.arvi-modal-backdrop.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.arvi-filter-panel{
+  position:fixed;
+  top:calc(64px + env(safe-area-inset-top,0px));
+  right:10px;
+  z-index:5000;
+  width:min(280px, calc(100% - 20px));
+  max-height:calc(100dvh - 64px - env(safe-area-inset-top,0px) - 20px);
+  background:rgba(20,20,20,0.96);
+  border:1px solid var(--grid-line-strong);
+  border-radius:14px;
+  box-shadow:0 16px 40px -16px rgba(0,0,0,0.7);
+  backdrop-filter:blur(6px);
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+  transform:translateY(-8px) scale(0.98);
+  pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease;
+}
+.arvi-filter-panel.open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.arvi-filter-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid var(--grid-line);
+  font-size:12px;
+  font-weight:600;
+  color:var(--star);
+  flex-shrink:0;
+}
+.arvi-filter-head span{display:flex; align-items:center; gap:6px;}
+.arvi-filter-close{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:13px;
+  padding:2px 4px;
+}
+.arvi-filter-close:hover{color:var(--star);}
+.arvi-filter-scroll{
+  padding:12px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.arvi-filter-group h4{
+  margin:0 0 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  color:var(--muted);
+  font-weight:600;
+}
+.arvi-check{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:11.5px;
+  color:var(--star);
+  cursor:pointer;
+  user-select:none;
+  padding:4px 0;
+}
+.arvi-check input{
+  appearance:none;
+  -webkit-appearance:none;
+  flex-shrink:0;
+  width:17px;
+  height:17px;
+  margin:0;
+  border-radius:5px;
+  border:1.5px solid var(--grid-line-strong);
+  background:rgba(255,255,255,0.03);
+  position:relative;
+  cursor:pointer;
+  transition:background .18s ease, border-color .18s ease, transform .12s ease;
+}
+.arvi-check input:hover{border-color:var(--cyan);}
+.arvi-check input:active{transform:scale(0.86);}
+.arvi-check input::after{
+  content:'';
+  position:absolute;
+  left:5px; top:1px;
+  width:4px; height:8px;
+  border:solid #08131a;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg) scale(0);
+  transform-origin:60% 40%;
+  opacity:0;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1), opacity .12s ease;
+}
+.arvi-check input:checked{
+  background:var(--cyan);
+  border-color:var(--cyan);
+  transition:background .18s ease, border-color .18s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.arvi-check input:checked::after{
+  transform:rotate(45deg) scale(1);
+  opacity:1;
+}
+.arvi-filter-group .arvi-control-row,
+.arvi-filter-group .arvi-radar-transport,
+.arvi-filter-group .arvi-snow-toggle{margin-top:8px;}
+.arvi-filter-hint{
+  font-size:10.5px;
+  line-height:1.5;
+  color:var(--muted);
+  margin:6px 0;
+}
+.arvi-filter-hint a{color:var(--cyan);}
+.arvi-key-row{
+  display:flex;
+  gap:6px;
+  margin-top:4px;
+}
+.arvi-key-input{
+  flex:1;
+  min-width:0;
+  background:var(--bg-panel);
+  border:1px solid var(--grid-line);
+  color:var(--star);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  border-radius:8px;
+  padding:8px 10px;
+}
+.arvi-key-input:focus{outline:none; border-color:var(--cyan);}
+.arvi-key-save{
+  background:var(--cyan);
+  color:var(--bg-deep);
+  border:none;
+  border-radius:8px;
+  padding:0 14px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.arvi-key-save:hover{filter:brightness(1.08);}
+.arvi-key-status{
+  font-size:11px;
+  color:var(--muted);
+  margin:8px 0 0;
+}
+.arvi-key-status.is-live{color:var(--cyan);}
+.arvi-key-status.is-error{color:var(--danger);}
+.arvi-filter-group-test{
+  padding-bottom:14px;
+  border-bottom:1px dashed var(--grid-line-strong);
+}
+.arvi-test-alarm-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  appearance:none;
+  border:1px solid var(--ember);
+  border-radius:10px;
+  padding:10px 12px;
+  background:var(--ember-dim);
+  color:var(--star);
+  font-family:inherit;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+.arvi-test-alarm-btn:hover{background:var(--ember); color:#1a1000;}
+.arvi-test-alarm-btn:active{transform:scale(0.98);}
+/* ===== ISFR-ARVI full-screen map layout ===== */
+body.arvi-fullmap{
+  padding:0;
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.arvi-fullmap .site-nav-bar{flex-shrink:0;}
+.arvi-fullmap .wrap{
+  flex:1 1 auto;
+  min-height:0;
+  max-width:none;
+  width:100%;
+  margin:0;
+  position:relative;
+  overflow:hidden;
+}
+.arvi-fullmap .arvi-layout{
+  display:block;
+  height:100%;
+  gap:0;
+}
+.arvi-fullmap .panel.wide{
+  position:absolute;
+  inset:0;
+  margin:0;
+  padding:0;
+  border:none;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+}
+.arvi-fullmap .panel.wide:hover{
+  border-color:transparent;
+  box-shadow:none;
+  transform:none;
+}
+.arvi-fullmap .panel.wide > h2,
+.arvi-fullmap .panel.wide > .panel-note{display:none;}
+.arvi-fullmap .arvi-map-wrap{
+  position:absolute;
+  inset:0;
+  height:auto;
+  margin-top:0;
+  border:none;
+  border-radius:0;
+}
+/* Floating title card, top-left over the map - stays out of the way of
+   the filter toggle (top-right) and stats toggle (also top-left, below it). */
+.arvi-fullmap header{
+  position:absolute;
+  top:58px;
+  left:10px;
+  right:10px;
+  z-index:80;
+  max-width:360px;
+  margin:0;
+  padding:12px 16px;
+  background:rgba(20,20,20,0.9);
+  border:1px solid var(--grid-line-strong);
+  border-radius:14px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  box-shadow:0 12px 30px -14px rgba(0,0,0,0.6);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+}
+.arvi-fullmap header::before,
+.arvi-fullmap header::after{display:none;}
+.arvi-fullmap header .eyebrow{margin:0; font-size:10.5px;}
+.arvi-fullmap header h1{margin:0; font-size:15px; line-height:1.3;}
+.arvi-fullmap header .lede{display:none;}
+.arvi-fullmap header .status{font-size:11px;}
+
+/* Stats drawer - mirrors .arvi-filter-panel but opens from the top-left,
+   so it never collides with the layer filter drawer on the top-right. */
+.arvi-stats-toggle{
+  position:absolute;
+  top:10px;
+  left:10px;
+  z-index:1001;
+  width:38px;height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(28,28,28,0.92);
+  border:1px solid var(--grid-line-strong);
+  border-radius:10px;
+  color:var(--star);
+  font-size:15px;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  transition:border-color .15s ease, background .15s ease;
+}
+.arvi-stats-toggle:hover{border-color:var(--cyan); background:var(--bg-panel-2);}
+.arvi-stats-drawer{
+  position:fixed;
+  top:calc(64px + env(safe-area-inset-top,0px));
+  left:10px;
+  z-index:5000;
+  width:min(340px, calc(100% - 20px));
+  max-height:calc(100dvh - 64px - env(safe-area-inset-top,0px) - 20px);
+  background:rgba(20,20,20,0.96);
+  border:1px solid var(--grid-line-strong);
+  border-radius:14px;
+  box-shadow:0 16px 40px -16px rgba(0,0,0,0.7);
+  backdrop-filter:blur(6px);
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+  transform:translateY(-8px) scale(0.98);
+  pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease;
+}
+.arvi-stats-drawer.open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.arvi-stats-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+  border-bottom:1px solid var(--grid-line);
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--star);
+  flex-shrink:0;
+}
+.arvi-stats-head span{display:flex; align-items:center; gap:7px;}
+.arvi-stats-close{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:14px;
+  padding:2px 4px;
+}
+.arvi-stats-close:hover{color:var(--star);}
+.arvi-stats-scroll{
+  padding:14px;
+  overflow-y:auto;
+}
+.arvi-stats-scroll .arvi-stat-card{padding:0; border:none; background:none;}
+.arvi-stats-scroll .arvi-stat-card:hover{box-shadow:none; border-color:transparent;}
+.arvi-stats-scroll .arvi-stat-card + .arvi-stat-card{
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid var(--grid-line);
+}
+/* dBZ legend now overlays the map instead of sitting in normal flow below it */
+.arvi-fullmap .arvi-dbz-legend{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  z-index:900;
+  width:min(230px, calc(100% - 20px));
+  margin-top:0;
+  background:rgba(20,20,20,0.9);
+  backdrop-filter:blur(4px);
+}
+@media (max-width:520px){
+  .arvi-stats-drawer{left:8px; right:8px; width:auto;}
+  .arvi-fullmap .arvi-dbz-legend{right:8px; bottom:64px; width:calc(100% - 16px);}
+}
+
+/* ===== ISFR-ARVI fire-update toast notifications ===== */
+.arvi-toast-stack{
+  position:fixed;
+  /* Site nav bar (position:sticky, ~54-60px tall incl. padding) sits at
+     the very top of every page. This toast stack used to start at just
+     12px from the top of the VIEWPORT, so it rendered on top of/right
+     against the nav bar instead of clearing it - pushing it down below
+     the nav bar's approximate height fixes that overlap. */
+  top:calc(64px + env(safe-area-inset-top,0px));
+  left:50%;
+  transform:translateX(-50%);
+  z-index:4000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:min(360px, calc(100% - 24px));
+  pointer-events:none;
+}
+.arvi-toast{
+  pointer-events:auto;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  background:rgba(18,18,18,0.97);
+  border:1px solid var(--ember-dim);
+  border-left:3px solid var(--ember);
+  border-radius:12px;
+  padding:10px 10px 10px 12px;
+  font-size:12.5px;
+  color:var(--star);
+  line-height:1.45;
+  box-shadow:0 16px 36px -14px rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0;
+  transform:translateY(-10px) scale(0.98);
+  transition:opacity .22s ease, transform .22s ease;
+}
+.arvi-toast.show{opacity:1; transform:translateY(0) scale(1);}
+.arvi-toast-icon{color:var(--ember); font-size:15px; flex-shrink:0; margin-top:2px;}
+.arvi-toast-body{flex:1; min-width:0;}
+.arvi-toast-title{font-weight:600; margin:0 0 2px; color:var(--star);}
+.arvi-toast-body p{margin:0; color:var(--muted);}
+.arvi-toast-close{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:12px;
+  padding:2px 4px;
+  flex-shrink:0;
+}
+.arvi-toast-close:hover{color:var(--star);}
+@media (prefers-reduced-motion: reduce){
+  .arvi-toast{transition:opacity .15s ease;}
+}
+
+/* Small pulsing dot on the statistics button, shown when new fire
+   hotspots have been detected since the drawer was last opened. */
+.arvi-notif-dot{
+  position:absolute;
+  top:-2px;
+  right:-2px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--ember);
+  border:2px solid #1c1c1c;
+  animation:arviNotifPulse 1.8s ease-out infinite;
+}
+@keyframes arviNotifPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,158,74,0.55);}
+  70%{box-shadow:0 0 0 7px rgba(255,158,74,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,158,74,0);}
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-notif-dot{animation:none;}
+}
+
+/* ===== ISFR-ARVI notification history panel ===== */
+.arvi-notif-history{
+  max-height:220px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.arvi-notif-row{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  font-size:11.5px;
+}
+.arvi-notif-row > i{margin-top:3px; flex-shrink:0; width:13px; text-align:center;}
+.arvi-notif-row-body{flex:1; min-width:0;}
+.arvi-notif-row-title{
+  margin:0;
+  color:var(--star);
+  font-weight:600;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+}
+.arvi-notif-row-time{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:400;
+  font-size:10.5px;
+  color:var(--muted);
+  flex-shrink:0;
+}
+.arvi-notif-row-text{
+  margin:2px 0 0;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+/* ===== ISFR-ARVI full-screen earthquake alarm (Japan EEW-style) ===== */
+body.arvi-alarm-open{overflow:hidden;}
+.arvi-quake-alarm{
+  position:fixed;
+  inset:0;
+  z-index:6000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(160deg, #7a0000 0%, #2b0000 55%, #120000 100%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.arvi-quake-alarm.show{
+  opacity:1;
+  pointer-events:auto;
+  animation:arviAlarmFlash 1s steps(1,end) infinite;
+}
+.arvi-quake-alarm[hidden]{display:none;}
+.arvi-quake-alarm.is-near{
+  background:linear-gradient(160deg, #9c0000 0%, #3a0000 55%, #150000 100%);
+}
+.arvi-quake-alarm.is-tsunami{
+  background:linear-gradient(160deg, #7a3f00 0%, #3a1c00 55%, #150a00 100%);
+}
+.arvi-tsunami-strip{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 14px;
+  padding:10px 14px;
+  border-radius:10px;
+  background:rgba(255,60,0,0.22);
+  border:1px solid rgba(255,150,60,0.55);
+  font-size:13px;
+  font-weight:700;
+  line-height:1.4;
+  text-align:left;
+  color:#ffd9b3;
+}
+.arvi-tsunami-strip i{
+  flex-shrink:0;
+  font-size:20px;
+  color:#ff9e4a;
+}
+.arvi-tsunami-strip[hidden]{display:none;}
+
+/* Earthquake "shockwave" ripple rings at the epicenter - shown for quakes
+   that just happened (still "recent"), on top of the regular dot marker,
+   so a fresh event is obviously visible on the map at a glance instead of
+   looking identical to a 3-week-old M3.6. Pure CSS loop (transform+opacity)
+   rather than animating SVG r/cx/cy, so it behaves consistently across
+   browsers/Leaflet panes. */
+.arvi-quake-ripple{ position:relative; width:0; height:0; pointer-events:none; }
+.arvi-quake-ripple-ring{
+  position:absolute;
+  top:0; left:0;
+  width:16px; height:16px;
+  margin:-8px 0 0 -8px;
+  border-radius:50%;
+  border:2px solid var(--ring-color, #ff7a45);
+  opacity:0.85;
+  transform:scale(0.4);
+  animation:arviQuakeRipple 2.6s ease-out infinite;
+  will-change:transform, opacity;
+}
+.arvi-quake-ripple-ring.r2{ animation-delay:0.85s; }
+.arvi-quake-ripple-ring.r3{ animation-delay:1.7s; }
+@keyframes arviQuakeRipple{
+  0%{ transform:scale(0.4); opacity:0.85; }
+  100%{ transform:scale(var(--ring-scale, 7)); opacity:0; }
+}
+/* One-shot, faster/brighter version fired the instant a brand-new quake
+   is detected (USGS poll or BMKG cross-check) - plays through once then
+   the marker removes itself, layered on top of the looping ripple above. */
+.arvi-quake-burst-ring{
+  position:absolute;
+  top:0; left:0;
+  width:16px; height:16px;
+  margin:-8px 0 0 -8px;
+  border-radius:50%;
+  border:3px solid var(--ring-color, #ff3b3b);
+  opacity:0.95;
+  transform:scale(0.3);
+  animation:arviQuakeBurst 1.9s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.arvi-quake-burst-ring.b2{ animation-delay:0.22s; }
+.arvi-quake-burst-ring.b3{ animation-delay:0.44s; }
+@keyframes arviQuakeBurst{
+  0%{ transform:scale(0.3); opacity:0.95; }
+  100%{ transform:scale(var(--ring-scale, 10)); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-quake-ripple-ring, .arvi-quake-burst-ring{animation:none; opacity:.3;}
+}
+@keyframes arviAlarmFlash{
+  0%, 100%{ background-color:rgba(255,40,40,0); }
+  50%{ background-color:rgba(255,40,40,0.22); }
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-quake-alarm.show{animation:none;}
+}
+.arvi-quake-alarm-inner{
+  position:relative;
+  max-width:420px;
+  width:100%;
+}
+.arvi-quake-alarm-icon{
+  font-size:56px;
+  color:#ffd23f;
+  margin-bottom:10px;
+  display:inline-block;
+  animation:arviAlarmIconPulse 0.9s ease-in-out infinite;
+}
+@keyframes arviAlarmIconPulse{
+  0%, 100%{ transform:scale(1); }
+  50%{ transform:scale(1.14); }
+}
+@media (prefers-reduced-motion: reduce){
+  .arvi-quake-alarm-icon{animation:none;}
+}
+.arvi-quake-alarm-kicker{
+  margin:0 0 4px;
+  font-family:'IBM Plex Mono', monospace;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#ffd23f;
+}
+.arvi-quake-alarm-source{
+  margin:0 0 10px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+}
+.arvi-quake-alarm-mag{
+  margin:0 0 6px;
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:700;
+  font-size:clamp(40px, 14vw, 72px);
+  line-height:1;
+  color:#fff;
+  text-shadow:0 4px 22px rgba(0,0,0,0.55);
+}
+.arvi-quake-alarm-place{
+  margin:0 0 4px;
+  font-size:17px;
+  font-weight:600;
+  color:#fff;
+}
+.arvi-quake-alarm-time{
+  margin:0 0 14px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  color:rgba(255,255,255,0.75);
+}
+.arvi-quake-alarm-caution{
+  margin:0 0 14px;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:#fff;
+}
+.arvi-quake-alarm-caution em{
+  font-style:normal;
+  color:#ffd23f;
+}
+.arvi-quake-alarm-note{
+  margin:0 0 20px;
+  font-size:11px;
+  line-height:1.5;
+  color:rgba(255,255,255,0.65);
+}
+.arvi-quake-alarm-actions{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+}
+.arvi-quake-alarm-btn{
+  flex:1;
+  appearance:none;
+  border:none;
+  border-radius:999px;
+  padding:13px 16px;
+  font-size:13.5px;
+  font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  text-decoration:none;
+  box-shadow:0 10px 26px -8px rgba(0,0,0,0.6);
+}
+.arvi-quake-alarm-btn-safe{
+  color:#0b3d24;
+  background:#5fd3c4;
+}
+.arvi-quake-alarm-btn-safe:hover{background:#7fe2d6;}
+.arvi-quake-alarm-btn-report{
+  color:#fff;
+  background:#e2000d;
+}
+.arvi-quake-alarm-btn-report:hover{background:#ff3b3b;}
+.arvi-quake-alarm-btn:active{transform:scale(0.97);}
+.arvi-quake-alarm-dismiss{
+  appearance:none;
+  border:none;
+  background:none;
+  color:rgba(255,255,255,0.6);
+  font-size:12.5px;
+  font-weight:600;
+  font-family:inherit;
+  text-decoration:underline;
+  cursor:pointer;
+  padding:6px;
+}
+.arvi-quake-alarm-dismiss:hover{color:#fff;}
+@media (max-width:420px){
+  .arvi-quake-alarm-icon{font-size:44px;}
+  .arvi-quake-alarm-place{font-size:15px;}
+  .arvi-quake-alarm-actions{flex-direction:column;}
+}
+
+/* ---- Felt-report modal (opened from the alarm's "Laporkan" button) ---- */
+.arvi-report-modal{
+  position:fixed;
+  inset:0;
+  z-index:6100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(4,6,14,0.78);
+  backdrop-filter:blur(3px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease;
+}
+.arvi-report-modal.show{opacity:1; pointer-events:auto;}
+.arvi-report-modal[hidden]{display:none;}
+.arvi-report-modal-inner{
+  position:relative;
+  width:100%;
+  max-width:380px;
+  max-height:calc(100vh - 40px);
+  overflow-y:auto;
+  background:var(--bg-panel, #12172a);
+  border:1px solid var(--grid-line);
+  border-radius:16px;
+  padding:22px 20px 20px;
+  color:var(--star, #fff);
+}
+.arvi-report-modal-inner h3{
+  margin:0 0 6px;
+  font-size:17px;
+  font-weight:700;
+}
+.arvi-report-modal-context{
+  margin:0 0 16px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  color:var(--muted);
+}
+.arvi-report-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  appearance:none;
+  border:none;
+  background:none;
+  color:var(--muted);
+  font-size:16px;
+  cursor:pointer;
+  padding:4px;
+}
+.arvi-report-modal-close:hover{color:var(--star);}
+.arvi-report-field{
+  display:block;
+  margin-bottom:14px;
+}
+.arvi-report-field span{
+  display:block;
+  margin-bottom:6px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+}
+.arvi-report-field select,
+.arvi-report-field textarea{
+  width:100%;
+  background:var(--bg-panel-2, #0b0e1c);
+  border:1px solid var(--grid-line);
+  border-radius:10px;
+  padding:10px 12px;
+  color:var(--star, #fff);
+  font-family:inherit;
+  font-size:13.5px;
+  resize:vertical;
+}
+.arvi-report-modal-hint{
+  margin:0 0 16px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+}
+.arvi-report-modal-actions{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+.arvi-report-modal-actions .arvi-quake-alarm-btn{
+  padding:11px 14px;
+  font-size:13px;
+}
+.arvi-report-modal-bmkg-link{
+  display:block;
+  text-align:center;
+  font-size:11.5px;
+  color:var(--cyan);
+  text-decoration:none;
+}
+.arvi-report-modal-bmkg-link:hover{text-decoration:underline;}

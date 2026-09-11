@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISTrack - Mechanical</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="theme.js"></script>
+<script src="menu-color.js"></script>
+<script src="i18n.js"></script>
+<script src="motion.js"></script>
+</head>
+<body>
+
+<div class="site-nav-bar">
+  <nav class="site-nav">
+    <a class="site-brand" href="index.html" aria-label="ISTrack - beranda">
+      <img class="site-brand-logo" src="assets/istrack-icon.png" alt="">
+      <span class="site-brand-text">ISTrack</span>
+    </a>
+    <button class="hamburger-btn" id="hamburgerBtn" data-i18n-aria-label="nav.openMenu" aria-label="Buka menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="site-nav-links" id="siteNavLinks">
+      <a href="index.html" class="site-nav-link"><i class="fa-solid fa-satellite nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.iss">Pelacak ISS</span></a>
+      <a href="news.html" class="site-nav-link"><i class="fa-regular fa-newspaper nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.news">Warta</span></a>
+      <a href="mechanical.html" class="site-nav-link active"><i class="fa-solid fa-wave-square nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.mechanical">MECHANICAL</span></a>
+      <a href="arvi.html" class="site-nav-link"><i class="fa-solid fa-camera nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.arvi">ISFR-ARVI</span></a>
+      <a href="dokumentasi.html" class="site-nav-link"><i class="fa-solid fa-folder-open nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.docs">Dokumentasi</span></a>
+      <a href="settings.html" class="site-nav-link"><i class="fa-solid fa-gear nav-link-icon" aria-hidden="true"></i><span data-i18n="nav.settings">Pengaturan</span></a>
+    </div>
+  </nav>
+</div>
+
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow" data-i18n="mech.eyebrow">Mechanical</p>
+      <h1 data-i18n="mech.h1">Doppler Shift Sinyal Radio ISS</h1>
+      <p class="lede" data-i18n="mech.lede">ISS memancarkan sinyal radio VHF/UHF (suara amatir, APRS, dan repeater lintas-pita) sambil bergerak ~7,66 km/detik. Karena kecepatan relatifnya terhadap pengamat di Bumi terus berubah, frekuensi yang diterima juga bergeser - ini menghitungnya secara langsung.</p>
+    </div>
+    <div class="status" id="mechStatus" role="status" aria-live="polite">
+      <span data-i18n="mech.loadingTle">Memuat data orbit ISS…</span>
+    </div>
+  </header>
+
+  <section class="panel wide settings-panel">
+    <h2><i class="fa-solid fa-location-crosshairs panel-title-icon" aria-hidden="true"></i><span data-i18n="mech.locTitle">Lokasi pengamat</span></h2>
+    <p class="panel-note" data-i18n="mech.locNote">Doppler shift dihitung dari kecepatan ISS relatif terhadap posisimu - aktifkan lokasi untuk mulai.</p>
+    <button class="mini-locate-btn" id="mechLocateBtn" data-i18n="mech.activateLocation">Aktifkan lokasi</button>
+    <div class="mech-loc-row hidden" id="mechLocRow">
+      <i class="fa-solid fa-map-pin" aria-hidden="true"></i>
+      <span id="mechLocLabel">--</span>
+    </div>
+    <div class="mech-manual-loc hidden" id="mechManualLoc">
+      <p class="panel-note" data-i18n="mech.manualNote">Atau masukkan koordinat manual:</p>
+      <form id="mechManualForm" class="mech-manual-form">
+        <input type="number" step="0.0001" id="mechManualLat" placeholder="Lintang" data-i18n-placeholder="mech.latPlaceholder" required>
+        <input type="number" step="0.0001" id="mechManualLon" placeholder="Bujur" data-i18n-placeholder="mech.lonPlaceholder" required>
+        <button type="submit" class="unit-toggle-btn mech-manual-submit" data-i18n="mech.useCoords">Gunakan</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel wide settings-panel">
+    <h2><i class="fa-solid fa-satellite-dish panel-title-icon" aria-hidden="true"></i><span data-i18n="mech.freqTitle">Frekuensi sinyal</span></h2>
+    <p class="panel-note" data-i18n="mech.freqNote">Pilih salah satu frekuensi downlink ISS yang umum dipakai, atau masukkan frekuensi kustom (MHz).</p>
+    <div class="unit-toggle" id="mechFreqPresets" role="group" aria-label="Preset frekuensi"></div>
+    <div class="mech-custom-freq">
+      <label for="mechFreqCustom" data-i18n="mech.customFreq">Frekuensi kustom (MHz)</label>
+      <input type="number" step="0.001" id="mechFreqCustom">
+    </div>
+  </section>
+
+  <section class="panel wide">
+    <h2><i class="fa-solid fa-gauge-high panel-title-icon" aria-hidden="true"></i><span data-i18n="mech.readoutTitle">Pembacaan langsung</span></h2>
+    <div class="cards" id="mechReadoutGrid">
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-arrow-up-right-dots card-icon" aria-hidden="true"></i><span data-i18n="mech.cardElev">Elevasi ISS</span></div>
+        <div class="value" id="mechElev">--</div>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-ruler card-icon" aria-hidden="true"></i><span data-i18n="mech.cardRange">Jarak garis pandang</span></div>
+        <div class="value" id="mechRange">--</div>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-gauge card-icon" aria-hidden="true"></i><span data-i18n="mech.cardRadialVel">Kecepatan radial</span></div>
+        <div class="value" id="mechRadialVel">--</div>
+        <div class="mech-dir" id="mechRadialDir">--</div>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-tower-broadcast card-icon" aria-hidden="true"></i><span data-i18n="mech.cardBaseFreq">Frekuensi asli</span></div>
+        <div class="value" id="mechBaseFreq">--</div>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-arrows-left-right card-icon" aria-hidden="true"></i><span data-i18n="mech.cardShift">Pergeseran Doppler</span></div>
+        <div class="value" id="mechShiftHz">--</div>
+      </div>
+      <div class="card wide-card">
+        <div class="label"><i class="fa-solid fa-satellite card-icon" aria-hidden="true"></i><span data-i18n="mech.cardReceived">Frekuensi diterima</span></div>
+        <div class="value ember" id="mechReceivedFreq">--</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel wide">
+    <h2><i class="fa-solid fa-chart-line panel-title-icon" aria-hidden="true"></i><span data-i18n="mech.chartTitle">Grafik pergeseran (kHz)</span></h2>
+    <p class="panel-note" data-i18n="mech.chartNote">90 detik terakhir - nilai positif berarti frekuensi naik (mendekat), negatif berarti turun (menjauh).</p>
+    <div class="mech-chart-wrap">
+      <canvas id="mechDopplerChart"></canvas>
+    </div>
+  </section>
+
+  <section class="panel wide settings-panel">
+    <h2><i class="fa-solid fa-circle-info panel-title-icon" aria-hidden="true"></i><span data-i18n="mech.aboutTitle">Cara kerjanya</span></h2>
+    <p class="panel-note" data-i18n="mech.aboutBody1">Efek Doppler membuat frekuensi yang diterima naik saat ISS mendekat dan turun saat ISS menjauh, persis seperti nada sirene yang berubah saat ambulans lewat. ISTrack menghitung laju perubahan jarak (range-rate) antara ISS dan lokasimu dari data orbit TLE, lalu menerapkannya ke frekuensi yang kamu pilih.</p>
+      <p class="panel-note" data-i18n="mech.aboutBody2">Saat ISS di bawah horizon, sinyal VHF/UHF sebenarnya tidak bisa diterima (terhalang lengkungan Bumi) - angka tetap ditampilkan sebagai perhitungan geometris.</p>
+      <div class="source-chip-row">
+        <span class="source-chip">wheretheiss.at</span>
+        <span class="source-chip">CelesTrak</span>
+        <span class="source-chip" id="mechTleSource">--</span>
+      </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('hamburgerBtn');
+  var links=document.getElementById('siteNavLinks');
+  if(btn && links){
+    function close(){
+      links.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var open=links.classList.toggle('open');
+      btn.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    links.addEventListener('click',function(e){
+      if(e.target.tagName==='A')close();
+    });
+    document.addEventListener('click',function(e){
+      if(!links.contains(e.target)&&!btn.contains(e.target))close();
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape')close();
+    });
+  }
+})();
+</script>
+<script src="astro.js"></script>
+<script src="mechanical.js"></script>
+</body>
+</html>

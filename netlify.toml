@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Runs check-quakes-scheduled.js every 5 minutes, independent of whether
+# anyone has the site open - this is the background "server" side of the
+# earthquake alarm (see netlify/functions/check-quakes-scheduled.js).
+[functions."check-quakes-scheduled"]
+  schedule = "*/5 * * * *"
